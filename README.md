@@ -1,73 +1,46 @@
-# React + TypeScript + Vite
+# 🕊️ Faith Flash — The Envoys Media Hub
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Faith Flash is the dedicated media and testimony department of **RCCG THE ENVOYS**. This platform serves as a "Digital Command Center" for raising a supernatural army, featuring live broadcasts, podcast archives, and a global wall of fire encounters.
 
-Currently, two official plugins are available:
+## 🚀 Key Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Branded Preloader**: A premium "Sent Ones" loading experience mirroring the official Envoys ecosystem.
+- **Fire Hub (Online TV)**: Live integration with the RCCG The Envoys YouTube feed and a curated library of Faith Flash podcasts.
+- **Fire Wall (Testimonies)**: A digital portal for members to report and share supernatural encounters.
+- **Audio Hub**: High-impact audio messages for marketplace ambassadors.
+- **Premium Design System**: Fully responsive UI utilizing the official Envoys Green/Purple palette and **Anton** typography.
 
-## React Compiler
+## 🛠️ Technology Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Core**: React 18 + TypeScript
+- **Build Tool**: Vite
+- **Styling**: Vanilla CSS (High-performance, custom-built tokens)
+- **Routing**: React Router 6
+- **Animations**: Framer Motion & CSS Keyframes
 
-## Expanding the ESLint configuration
+## 📦 Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+2. **Run Dev Server**:
+   ```bash
+   npm run dev
+   ```
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+3. **Build for Production**:
+   ```bash
+   npm run build
+   ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 📂 Project Structure
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- `src/assets/img/`: Official ministry photography and branding assets.
+- `src/components/`: Reusable UI components (Magnetic buttons, Broadcast cards, etc.).
+- `src/content/`: `site.ts` — The single source of truth for all brand copy and media IDs.
+- `src/pages/`: Main application views (Home, TV, Testimonies, Audio).
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
+**WE ARE THE SENT ONES — RAISING A SUPERNATURAL ARMY DEPLOYED INTO EVERY SPHERE.**
