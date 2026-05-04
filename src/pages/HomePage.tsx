@@ -4,12 +4,42 @@ import { BroadcastCard } from '../components/BroadcastCard'
 import { TestimonyBubble } from '../components/TestimonyBubble'
 import { MagneticButton } from '../components/MagneticButton'
 import { useVideoModal } from '../context/VideoModalContext'
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
+
+type TeamMember = {
+  name: string
+  role: string
+  image: string
+  priority: number
+}
+
+const teamImageModules = import.meta.glob('../assets/img/Team-Members/*.{jpg,jpeg,png,webp}', {
+  eager: true,
+  import: 'default',
+}) as Record<string, string>
 
 export function HomePage() {
   const navigate = useNavigate()
   const { openModal } = useVideoModal()
   const scrollRefs = useRef<HTMLDivElement[]>([])
+  const teamMembers = useMemo<TeamMember[]>(() => {
+    return Object.entries(teamImageModules)
+      .map(([path, image]) => {
+        const raw = path.split('/').pop()?.replace(/\.[^.]+$/, '') ?? ''
+        const roleMatch = raw.match(/\(([^)]+)\)/)
+        const role = roleMatch?.[1]?.trim() ?? 'Team Member'
+        const name = raw.replace(/\s*\([^)]+\)\s*$/, '').trim()
+        const roleKey = role.toLowerCase()
+        const priority =
+          roleKey === 'team lead' ? 0 : roleKey === 'assistant team lead' ? 1 : 2
+
+        return { name, role, image, priority }
+      })
+      .sort((a, b) => {
+        if (a.priority !== b.priority) return a.priority - b.priority
+        return a.name.localeCompare(b.name)
+      })
+  }, [])
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -69,6 +99,43 @@ export function HomePage() {
           <MagneticButton className="btn--outline" onClick={() => navigate('/testimonies')}>
             Report Testimony
           </MagneticButton>
+        </div>
+      </section>
+
+      <section className="band reveal" ref={addToRefs}>
+        <div className="container">
+          <div className="section-heading" style={{ textAlign: 'center' }}>
+            <h2 className="section-heading__title">
+              Meet The <span style={{ color: 'var(--color-accent)' }}>Team</span>
+            </h2>
+            <p className="team-section__subtext">
+              The people carrying the fire behind Faith Flash.
+            </p>
+          </div>
+
+          <div className="team-grid">
+            {teamMembers.map((member) => (
+              <article
+                key={member.name}
+                className={`team-card ${
+                  member.priority < 2 ? 'team-card--featured' : ''
+                }`}
+              >
+                <div className="team-card__media">
+                  <img
+                    src={member.image}
+                    alt={member.name}
+                    className="team-card__image"
+                    loading="lazy"
+                  />
+                </div>
+                <div className="team-card__content">
+                  <h3 className="team-card__name">{member.name}</h3>
+                  <p className="team-card__role">{member.role}</p>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
