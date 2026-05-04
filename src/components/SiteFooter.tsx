@@ -21,13 +21,6 @@ export function SiteFooter() {
               ))}
             </ul>
           </div>
-          <div>
-            <h4 className="audio-card__meta" style={{ color: '#fff' }}>Legal</h4>
-            <ul style={{ listStyle: 'none', padding: 0, marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-              <li><a href="#" className="nav-link" style={{ fontSize: '0.75rem' }}>Privacy Policy</a></li>
-              <li><a href="#" className="nav-link" style={{ fontSize: '0.75rem' }}>Terms of Service</a></li>
-            </ul>
-          </div>
         </div>
         <div style={{ marginTop: '4rem', paddingTop: '2rem', borderTop: '1px solid var(--color-line)', display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--color-text-muted)' }}>
           <span>© {year} {site.church}</span>

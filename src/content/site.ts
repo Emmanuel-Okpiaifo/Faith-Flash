@@ -1,13 +1,15 @@
 /**
  * Central copy and media IDs — synchronized with rccgtheenvoys.org.
  */
+import heroImageAsset from '../assets/img/hero/WhatsApp Image 2026-05-03 at 6.34.06 PM.jpeg'
+
 export const site = {
   church: 'RCCG The Envoys',
   department: 'Faith Flash',
   tagline: 'WE ARE THE SENT ONES — RAISING A SUPERNATURAL ARMY DEPLOYED INTO EVERY SPHERE.',
   vision:
     'We are the heart that embraces all with love: the voice that speaks change into people with hope, comfort, and peace. Showcasing radical faith through our conviction.',
-  heroImage: '/src/assets/img/hero/WhatsApp Image 2026-05-03 at 6.34.06 PM.jpeg',
+  heroImage: heroImageAsset,
   youtube: {
     channelUrl: 'https://www.youtube.com/@RCCGTheEnvoys',
     liveEmbedVideoId: 'live', // Use 'live' to target the current live stream
@@ -105,7 +107,6 @@ export const site = {
   ],
   quickLinks: [
     { label: 'Official Envoys Site', href: 'https://www.rccgtheenvoys.org', external: true },
-    { label: 'YMR Global Movement', href: 'https://ymrglobal.org', external: true },
     { label: 'Report Testimony', href: '/testimonies#contact', external: false },
   ],
 } as const
