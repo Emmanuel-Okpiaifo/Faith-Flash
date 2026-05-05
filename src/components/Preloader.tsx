@@ -17,7 +17,7 @@ export function Preloader() {
       <div className="preloader__content">
         <div className="preloader__logo">
           <div className="preloader__spinner">
-             <img src="https://www.rccgtheenvoys.org/images/envoys1.png" alt="Logo" className="preloader__icon" />
+            <img src="https://www.rccgtheenvoys.org/images/envoys1.png" alt="Logo" className="preloader__icon" />
              <svg className="preloader__svg" viewBox="0 0 100 100">
                <path
                  id="curve"
@@ -26,14 +26,14 @@ export function Preloader() {
                />
                <text className="preloader__text">
                  <textPath xlinkHref="#curve">
-                   RCCG THE ENVOYS • THE SENT ONES • RCCG THE ENVOYS • THE SENT ONES •
+                    RCCG THE ENVOYS • THE SENT ONES • RCCG THE ENVOYS • THE SENT ONES •
                  </textPath>
                </text>
              </svg>
           </div>
         </div>
         <div className="preloader__footer">
-          THE SENT ONES
+          RCCG THE ENVOYS
         </div>
       </div>
       <style>{`
@@ -68,6 +68,9 @@ export function Preloader() {
           width: 80px;
           height: 80px;
           border-radius: 50%;
+          object-fit: contain;
+          object-position: center;
+          background: #000;
           z-index: 2;
         }
 

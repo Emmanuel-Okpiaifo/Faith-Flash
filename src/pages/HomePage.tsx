@@ -7,33 +7,42 @@ import { useVideoModal } from '../context/VideoModalContext'
 import { useEffect, useMemo, useRef } from 'react'
 
 type TeamMember = {
+  path: string
   name: string
   role: string
   image: string
   priority: number
 }
 
-const teamImageModules = import.meta.glob('../assets/img/Team-Members/*.{jpg,jpeg,png,webp}', {
+/** Any new image in this folder is picked up; extension is filtered so stray files are ignored. */
+const teamAssetModules = import.meta.glob('../assets/img/Team-Members/*', {
   eager: true,
   import: 'default',
 }) as Record<string, string>
+
+const TEAM_IMAGE_EXT = /\.(jpe?g|png|webp)$/i
 
 export function HomePage() {
   const navigate = useNavigate()
   const { openModal } = useVideoModal()
   const scrollRefs = useRef<HTMLDivElement[]>([])
   const teamMembers = useMemo<TeamMember[]>(() => {
-    return Object.entries(teamImageModules)
+    return Object.entries(teamAssetModules)
+      .filter(([path]) => TEAM_IMAGE_EXT.test(path))
       .map(([path, image]) => {
-        const raw = path.split('/').pop()?.replace(/\.[^.]+$/, '') ?? ''
+        const raw = path.split('/').pop()?.replace(/\.[^.]+$/i, '') ?? ''
         const roleMatch = raw.match(/\(([^)]+)\)/)
         const role = roleMatch?.[1]?.trim() ?? 'Team Member'
         const name = raw.replace(/\s*\([^)]+\)\s*$/, '').trim()
         const roleKey = role.toLowerCase()
         const priority =
-          roleKey === 'team lead' ? 0 : roleKey === 'assistant team lead' ? 1 : 2
+          roleKey === 'assistant team lead'
+            ? 1
+            : roleKey === 'team lead'
+              ? 0
+              : 2
 
-        return { name, role, image, priority }
+        return { path, name, role, image, priority }
       })
       .sort((a, b) => {
         if (a.priority !== b.priority) return a.priority - b.priority
@@ -102,7 +111,7 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="band reveal" ref={addToRefs}>
+      <section className="band reveal meet-team" ref={addToRefs}>
         <div className="container">
           <div className="section-heading" style={{ textAlign: 'center' }}>
             <h2 className="section-heading__title">
@@ -116,10 +125,14 @@ export function HomePage() {
           <div className="team-grid">
             {teamMembers.map((member) => (
               <article
-                key={member.name}
-                className={`team-card ${
-                  member.priority < 2 ? 'team-card--featured' : ''
-                }`}
+                key={member.path}
+                className={[
+                  'team-card',
+                  member.priority < 2 ? 'team-card--featured' : '',
+                  member.name === 'Emmanuel Okpiaifo' ? 'team-card--photo-zoom-out' : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
               >
                 <div className="team-card__media">
                   <img
@@ -131,7 +144,18 @@ export function HomePage() {
                 </div>
                 <div className="team-card__content">
                   <h3 className="team-card__name">{member.name}</h3>
-                  <p className="team-card__role">{member.role}</p>
+                  <p
+                    className={[
+                      'team-card__role',
+                      member.role.toLowerCase() === 'assistant team lead'
+                        ? 'team-card__role--assistant-lead'
+                        : '',
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
+                  >
+                    {member.role}
+                  </p>
                 </div>
               </article>
             ))}

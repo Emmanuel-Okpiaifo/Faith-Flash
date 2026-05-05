@@ -620,6 +620,20 @@ h1, h2, h3 {
   transform: scale(1.05);
 }
 
+/* Slightly zoom out a specific portrait that reads too tight in the crop */
+.team-card--photo-zoom-out .team-card__media {
+  background: #0a0a0a;
+}
+
+.team-card--photo-zoom-out .team-card__image {
+  transform: scale(0.88);
+  object-position: center 22%;
+}
+
+.team-card--photo-zoom-out:hover .team-card__image {
+  transform: scale(0.93);
+}
+
 .team-card__content {
   position: absolute;
   left: 0;
@@ -651,6 +665,39 @@ h1, h2, h3 {
   border: 1px solid rgba(46, 204, 113, 0.65);
   border-radius: 999px;
   padding: 0.45rem 0.7rem;
+}
+
+@media (min-width: 1025px) {
+  .meet-team .section-heading__title {
+    font-size: clamp(1.65rem, 2.2vw, 2.35rem);
+    line-height: 1.05;
+  }
+
+  .meet-team .team-section__subtext {
+    font-size: 0.88rem;
+    margin-top: 0.75rem;
+  }
+
+  .meet-team .team-grid {
+    margin-top: 2rem;
+    gap: 1.15rem;
+  }
+
+  .meet-team .team-card__name {
+    font-size: clamp(1rem, 1.35vw, 1.4rem);
+    margin-bottom: 0.35rem;
+  }
+
+  .meet-team .team-card__role {
+    font-size: 0.58rem;
+    letter-spacing: 0.1em;
+    padding: 0.38rem 0.6rem;
+  }
+
+  .meet-team .team-card__role--assistant-lead {
+    white-space: nowrap;
+    max-width: min(100%, 18rem);
+  }
 }
 
 /* Live Indicator */
@@ -1120,7 +1167,10 @@ h1, h2, h3 {
   .site-header__nav { display: none; }
   .ticker-bar { font-size: 0.7rem; }
   .site-header__bar { padding-inline: 1rem; }
-  .hero { --hero-pad-x: clamp(0.625rem, 3.5vw, 1.25rem); }
+  .hero {
+    --hero-pad-x: clamp(0.625rem, 3.5vw, 1.25rem);
+    padding-top: calc(var(--header-h) + 56px);
+  }
   .hero__title { font-size: clamp(1.85rem, 10vw, 3.25rem); }
   .hero__visual-container {
     aspect-ratio: 4 / 5;
@@ -1159,7 +1209,7 @@ h1, h2, h3 {
 
 @media (max-width: 480px) {
   .site-header { width: calc(100% - 1rem); margin-top: 0.5rem; }
-  .hero { padding-top: calc(var(--header-h) + 16px); min-height: min(100vh, 100dvh); }
+  .hero { padding-top: calc(var(--header-h) + 44px); min-height: min(100vh, 100dvh); }
   .hero__title { font-size: clamp(1.5rem, 10.5vw, 2.75rem); }
   .hero__visual-container { aspect-ratio: 3 / 4; border-radius: 14px; }
   .hero__floating-card {

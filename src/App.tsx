@@ -6,18 +6,22 @@ import { TestimoniesPage } from './pages/TestimoniesPage'
 import { PodcastsPage } from './pages/PodcastsPage'
 import { VideoModalProvider } from './context/VideoModalContext'
 
-const router = createBrowserRouter([
-  {
-    path: '/',
-    element: <MainLayout />,
-    children: [
-      { index: true, element: <HomePage /> },
-      { path: 'online-tv', element: <OnlineTVPage /> },
-      { path: 'testimonies', element: <TestimoniesPage /> },
-      { path: 'podcasts', element: <PodcastsPage /> },
-    ],
-  },
-])
+const basenameRaw = import.meta.env.BASE_URL.replace(/\/$/, '')
+const router = createBrowserRouter(
+  [
+    {
+      path: '/',
+      element: <MainLayout />,
+      children: [
+        { index: true, element: <HomePage /> },
+        { path: 'online-tv', element: <OnlineTVPage /> },
+        { path: 'testimonies', element: <TestimoniesPage /> },
+        { path: 'podcasts', element: <PodcastsPage /> },
+      ],
+    },
+  ],
+  { basename: basenameRaw === '' ? undefined : basenameRaw }
+)
 
 export default function App() {
   return (

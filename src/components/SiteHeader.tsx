@@ -45,7 +45,13 @@ export function SiteHeader({ scrolled }: SiteHeaderProps) {
     <header className={`site-header ${scrolled ? 'site-header--scrolled' : ''}`}>
       <div className="site-header__bar">
         <NavLink to="/" className="site-header__dept" style={{ display: 'flex', alignItems: 'center', gap: '1rem', textDecoration: 'none', minWidth: 0 }}>
-          <img src="https://www.rccgtheenvoys.org/images/envoys1.png" alt="" style={{ height: '40px', width: '40px', borderRadius: '50%', flexShrink: 0 }} />
+          <img
+            src="https://www.rccgtheenvoys.org/images/envoys1.png"
+            alt=""
+            width={40}
+            height={40}
+            style={{ height: '40px', width: '40px', borderRadius: '50%', flexShrink: 0, objectFit: 'contain', objectPosition: 'center', background: '#000' }}
+          />
           <span style={{ fontWeight: 800, letterSpacing: '-0.03em', color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             FAITH FLASH
           </span>
