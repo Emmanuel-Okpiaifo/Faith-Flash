@@ -78,32 +78,32 @@ export function HomePage() {
         <h1 className="hero__title">
           Faith Flash
         </h1>
-        
+
         <div className="hero__mission">
           RAISING A<br />SUPERNATURAL ARMY
         </div>
 
         <div className="hero__visual-container">
-          <img 
-            src={site.heroImage} 
-            alt="Faith Flash Hero" 
+          <img
+            src={site.heroImage}
+            alt="Faith Flash Hero"
             className="hero__image"
           />
-          
+
           <div className="hero__floating-card">
             <div className="hero__card-header">
-              Next Kingdom Deployment
+              This is where Faith finds Expression
             </div>
             <div className="hero__card-body">
-              <h3 className="hero__card-title">Live Service</h3>
-              <p className="hero__card-meta">Sunday • 1:00 PM • The Nest</p>
+              <h3 className="hero__card-title">Envoys Heartbeat</h3>
+              <p className="hero__card-meta">Where stories breathe and voices rise!</p>
             </div>
           </div>
         </div>
 
         <div className="hero__actions">
           <MagneticButton className="btn--accent" onClick={() => navigate('/online-tv')}>
-            Enter The Fire Hub
+            Enter The Faith Hub
           </MagneticButton>
           <MagneticButton className="btn--outline" onClick={() => navigate('/testimonies')}>
             Report Testimony
@@ -171,9 +171,9 @@ export function HomePage() {
           </div>
           <div className="tile-grid">
             {site.episodes.slice(0, 3).map((ep) => (
-              <BroadcastCard 
-                key={ep.title} 
-                {...ep} 
+              <BroadcastCard
+                key={ep.title}
+                {...ep}
                 onClick={() => openModal(ep)}
               />
             ))}

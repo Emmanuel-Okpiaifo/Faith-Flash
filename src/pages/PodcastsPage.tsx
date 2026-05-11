@@ -12,9 +12,9 @@ export function PodcastsPage() {
               Kingdom Frequencies
             </div>
             <h1 className="section-heading__title">The Sound of <span style={{ color: 'var(--color-accent)' }}>Revival</span></h1>
-            <p className="hero__lede">Supernatural upgrades for the marketplace ambassador.</p>
+            <p className="hero__lede">Life can be loud, but truth speaks in stillness. Meet yourself wherever you are. Listen to messages that heal, teachings that guide, and conversations that ignite purpose.</p>
           </div>
-          
+
           <div className="studio-deck">
             {site.podcasts.map((p) => (
               <PodcastCard key={p.id} {...p} />
