@@ -44,11 +44,8 @@ export function MagazineViewerPage() {
               <p className="magazine-viewer__meta">
                 <span>{magazine.issue}</span>
                 <span aria-hidden>·</span>
-                <span>{magazine.theme}</span>
-                <span aria-hidden>·</span>
                 <span>{magazine.dates}</span>
               </p>
-              <p className="magazine-viewer__status">{magazine.status}</p>
             </div>
             <div className="magazine-viewer__actions">
               <a
@@ -65,28 +62,6 @@ export function MagazineViewerPage() {
           <div className="magazine-viewer__stage-wrap">
             <DearFlipViewer pdfUrl={pdfUrl} title={magazine.title} height={720} />
           </div>
-
-          <p className="magazine-viewer__credit">
-            Flipbook powered by{' '}
-            <a
-              href="https://js.dearflip.com/"
-              target="_blank"
-              rel="noreferrer"
-              className="nav-link"
-            >
-              DearFlip (Lite)
-            </a>{' '}
-            — licensed under{' '}
-            <a
-              href="https://creativecommons.org/licenses/by-nc-nd/4.0/"
-              target="_blank"
-              rel="noreferrer"
-              className="nav-link"
-            >
-              CC BY-NC-ND 4.0
-            </a>
-            .
-          </p>
         </div>
       </section>
 
@@ -120,14 +95,6 @@ export function MagazineViewerPage() {
         .magazine-viewer__meta span[aria-hidden] {
           color: var(--color-accent);
         }
-        .magazine-viewer__status {
-          margin: 0;
-          font-size: 0.75rem;
-          font-weight: 600;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          color: var(--color-accent);
-        }
         .magazine-viewer__actions {
           display: flex;
           align-items: flex-end;
@@ -144,13 +111,6 @@ export function MagazineViewerPage() {
           padding: 1rem;
           box-shadow: var(--shadow-huge);
         }
-        .magazine-viewer__credit {
-          margin-top: 1.25rem;
-          font-size: 0.75rem;
-          color: var(--color-text-muted);
-          text-align: center;
-        }
-
         .dearflip {
           position: relative;
           min-height: 480px;
