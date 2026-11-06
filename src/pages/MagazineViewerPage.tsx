@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useRef } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { site } from '../content/site'
 import { appHref } from '../lib/appHref'
@@ -29,6 +30,57 @@ export function MagazineViewerPage() {
   }
 
   const pdfUrl = appHref(magazine.file)
+  const stageRef = useRef<HTMLDivElement>(null)
+  const scrollToMagazine = useCallback(() => {
+    const stage = stageRef.current
+    if (!stage) return
+    const target = () => {
+      const node = stageRef.current
+      if (!node) return window.scrollY
+      const header = document.querySelector('.site-header')
+      const offset = (header?.getBoundingClientRect().height ?? 72) + 16
+      return Math.max(0, node.getBoundingClientRect().top + window.scrollY - offset)
+    }
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (reduce) {
+      window.scrollTo({ top: target(), behavior: 'auto' })
+      return () => {}
+    }
+    const from = window.scrollY
+    const start = performance.now()
+    let frame = 0
+    const step = (now: number) => {
+      const t = Math.min(1, (now - start) / 1000)
+      const eased = t < 0.5 ? 2 * t * t : 1 - ((-2 * t + 2) ** 2) / 2
+      window.scrollTo(0, from + (target() - from) * eased)
+      if (t < 1) frame = window.requestAnimationFrame(step)
+    }
+    frame = window.requestAnimationFrame(step)
+    return () => window.cancelAnimationFrame(frame)
+  }, [])
+
+  useEffect(() => {
+    let cancel = () => {}
+    let timer = 0
+    let dead = false
+    const start = () => {
+      if (dead) return
+      timer = window.setTimeout(() => {
+        if (!dead) cancel = scrollToMagazine()
+      }, 0)
+    }
+    if (document.readyState === 'complete') {
+      start()
+    } else {
+      window.addEventListener('load', start, { once: true })
+    }
+    return () => {
+      dead = true
+      window.clearTimeout(timer)
+      window.removeEventListener('load', start)
+      cancel()
+    }
+  }, [scrollToMagazine])
 
   return (
     <>
@@ -55,7 +107,7 @@ export function MagazineViewerPage() {
             </a>
           </div>
         </div>
-        <div className="magazine-viewer__stage-wrap reveal">
+        <div className="magazine-viewer__stage-wrap reveal" ref={stageRef}>
           <DearFlipViewer pdfUrl={pdfUrl} title={magazine.title} />
         </div>
       </section>
@@ -81,6 +133,7 @@ export function MagazineViewerPage() {
         .magazine-viewer__stage-wrap {
           width: min(1440px, calc(100% - 1.5rem));
           margin: 0 auto;
+          scroll-margin-top: 5.5rem;
           background: #fff;
           border: 1px solid var(--color-line);
           border-radius: var(--radius-lg);

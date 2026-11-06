@@ -39,16 +39,21 @@ export function HouseHero() {
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
     >
-      {slides.map((slide, slideIndex) => (
-        <div
-          key={slide.label}
-          className={`house-hero__slide${slideIndex === index ? ' house-hero__slide--active' : ''}`}
-          aria-hidden={slideIndex !== index}
-        >
-          <img src={slide.image} alt="" />
-        </div>
-      ))}
-      <div className="house-hero__scrim" />
+      <div className="house-hero__media">
+        {slides.map((slide, slideIndex) => (
+          <div
+            key={slide.label}
+            className={`house-hero__slide${slideIndex === index ? ' house-hero__slide--active' : ''}`}
+            aria-hidden={slideIndex !== index}
+          >
+            <picture>
+              <source media="(max-width: 900px)" srcSet={slide.imageMobile} />
+              <img src={slide.image} alt="" />
+            </picture>
+          </div>
+        ))}
+        <div className="house-hero__scrim" />
+      </div>
       <div className="house-hero__copy">
         <h1 className="house-hero__title">Faith Flash</h1>
         <span className="house-hero__rule" />

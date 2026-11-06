@@ -8,6 +8,16 @@ function housePhoto(file: string) {
   return `${imageKit}/tr:w-1800,h-1012,fo-top,c-maintain_ratio/${encodeURI(file)}`
 }
 
+/** Full width, with the bottom event banner removed. */
+function housePhotoClean(file: string, width: number) {
+  return `${imageKit}/tr:cm-extract,x-0,y-0,w-iw,h-ih_mul_0.86:w-${width}/${encodeURI(file)}`
+}
+
+/** Square frame on the woman speaking and the man in white listening. */
+function expressionPhoto(file: string) {
+  return `${imageKit}/tr:cm-extract,x-iw_mul_0.02,y-ih_mul_0.02,w-ih_mul_0.9,h-ih_mul_0.9:w-1200/${encodeURI(file)}`
+}
+
 export const siteOrigin = 'https://faith-flash.netlify.app'
 
 export const site = {
@@ -163,36 +173,42 @@ export const site = {
   intro: [
     {
       image: housePhoto('IMG-20260906-WA0123.jpg'),
-      caption: 'THE NEWS OF THE HOUSE',
+      caption: 'REPORTS',
     },
     {
       image: housePhoto('IMG-20261004-WA0117.jpg'),
-      caption: 'VOICES HE HAS LIFTED',
+      caption: 'WITNESS',
     },
     {
-      image: housePhoto('IMG-20260816-WA0035.jpg'),
-      caption: 'SENT BEYOND THESE WALLS',
+      image: expressionPhoto('IMG-20260816-WA0035.jpg'),
+      caption: 'EXPRESSION',
+      focus: 'center center',
     },
   ],
   heroSlides: [
     {
-      image: housePhoto('IMG-20260906-WA0123.jpg'),
+      image: housePhotoClean('IMG-20260906-WA0123.jpg', 1800),
+      imageMobile: housePhotoClean('IMG-20260906-WA0123.jpg', 1400),
       label: 'Envoys News · The house gathered',
     },
     {
-      image: housePhoto('IMG-20261004-WA0117.jpg'),
+      image: housePhotoClean('IMG-20261004-WA0117.jpg', 1800),
+      imageMobile: housePhotoClean('IMG-20261004-WA0117.jpg', 1400),
       label: 'Testimony · A witness at the pulpit',
     },
     {
-      image: housePhoto('IMG-20261017-WA0025(1).jpg'),
+      image: housePhotoClean('IMG-20261017-WA0025(1).jpg', 1800),
+      imageMobile: housePhotoClean('IMG-20261017-WA0025(1).jpg', 1400),
       label: 'Mercy Convention · Day Three',
     },
     {
-      image: housePhoto('IMG-20261004-WA0121.jpg'),
+      image: housePhotoClean('IMG-20261004-WA0121.jpg', 1800),
+      imageMobile: housePhotoClean('IMG-20261004-WA0121.jpg', 1400),
       label: 'Celebration · Stories shared in the house',
     },
     {
-      image: housePhoto('IMG-20260816-WA0035.jpg'),
+      image: housePhotoClean('IMG-20260816-WA0035.jpg', 1800),
+      imageMobile: housePhotoClean('IMG-20260816-WA0035.jpg', 1400),
       label: 'Outreach · Compassion beyond these walls',
     },
   ],

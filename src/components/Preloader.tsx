@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { site } from '../content/site'
 
-const PHOTO_MS = 1800
-const LOCK_MS = 1400
-const FADE_MS = 500
+const PHOTO_MS = 1700
+const LOCK_MS = 1500
+const FADE_MS = 450
+const RING = 'RCCG THE ENVOYS • FAITH FLASH • '.repeat(3)
 
 function prefersStill() {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -15,6 +16,7 @@ export function Preloader() {
   const [active, setActive] = useState(() => pathname === '/' && !prefersStill())
   const [beat, setBeat] = useState(0)
   const [closing, setClosing] = useState(false)
+  const ringId = `intro-ring-${useId().replace(/:/g, '')}`
 
   useEffect(() => {
     if (!active) return
@@ -51,121 +53,102 @@ export function Preloader() {
   if (!active) return null
 
   const photo = beat < site.intro.length ? site.intro[beat] : null
+  const caption = photo ? photo.caption : 'FAITH FLASH'
 
   return (
     <div className={`intro${closing ? ' intro--out' : ''}`} role="status" aria-live="polite" aria-label="Faith Flash">
-      {photo ? (
-        <figure className="intro__frame" key={photo.caption}>
-          <img src={photo.image} alt="" className="intro__photo" />
-          <figcaption className="intro__caption">
-            <p className="intro__kicker">RCCG THE ENVOYS</p>
-            <p className="intro__title">{photo.caption}</p>
-            <span className="intro__rule" />
-            <p className="intro__count">
-              {beat + 1} / {site.intro.length}
-            </p>
-          </figcaption>
-        </figure>
-      ) : (
-        <div className="intro__lockup">
-          <img src={site.logo} alt="RCCG The Envoys" className="intro__logo" />
-          <span className="intro__rule" />
-          <p className="intro__word">FAITH FLASH</p>
+      <div className="intro__stage" key={caption}>
+        <div className="intro__badge">
+          <img
+            src={photo ? photo.image : site.logo}
+            alt=""
+            className={photo ? 'intro__circle' : 'intro__circle intro__circle--logo'}
+            style={photo && 'focus' in photo ? { objectPosition: photo.focus } : undefined}
+          />
+          <svg className="intro__ring" viewBox="0 0 100 100" aria-hidden="true">
+            <path
+              id={ringId}
+              fill="none"
+              d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0"
+            />
+            <text className="intro__ring-text">
+              <textPath href={`#${ringId}`} textLength="239" lengthAdjust="spacing">
+                {RING}
+              </textPath>
+            </text>
+          </svg>
         </div>
-      )}
+        <p className="intro__caption">{caption}</p>
+      </div>
       <style>{`
         .intro {
           position: fixed;
           inset: 0;
           z-index: 9999;
-          background: #0d0d0d;
+          display: grid;
+          place-items: center;
+          background: #0D0D0D;
           color: #fff;
-          display: grid;
-          place-items: center;
         }
-        .intro--out {
-          animation: introOut ${FADE_MS}ms ease forwards;
+        .intro--out { animation: introOut ${FADE_MS}ms ease forwards; }
+        .intro__stage {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          width: min(92vw, 420px);
+          animation: introIn 0.45s ease both;
         }
-        .intro__frame,
-        .intro__lockup {
+        .intro__badge {
+          position: relative;
+          width: min(78vw, 320px);
+          height: min(78vw, 320px);
+        }
+        .intro__circle {
           position: absolute;
-          inset: 0;
-          display: grid;
-          place-items: end center;
-          animation: introIn 0.55s ease both;
-        }
-        .intro__lockup {
-          place-items: center;
-          gap: 1.1rem;
-          align-content: center;
-        }
-        .intro__photo {
-          position: fixed;
-          inset: 0;
-          width: 100vw;
-          height: 100vh;
+          inset: 16%;
+          width: 68%;
+          height: 68%;
+          border-radius: 50%;
           object-fit: cover;
-          object-position: center 12%;
+          object-position: center 22%;
         }
-        .intro__frame::after {
-          content: "";
+        .intro__circle--logo {
+          object-fit: contain;
+          object-position: center;
+          inset: 26%;
+          width: 48%;
+          height: 48%;
+          border-radius: 0;
+        }
+        .intro__ring {
           position: absolute;
           inset: 0;
-          background: linear-gradient(180deg, rgba(13,13,13,0.18) 0%, rgba(13,13,13,0.08) 40%, rgba(13,13,13,0.78) 100%);
+          overflow: visible;
+          animation: introSpin 16s linear infinite;
+        }
+        .intro__ring-text {
+          fill: #E7B84B;
+          font-family: var(--font-display);
+          font-size: 3.85px;
+          letter-spacing: 0.35px;
+          text-transform: uppercase;
         }
         .intro__caption {
-          position: relative;
-          z-index: 1;
+          margin: 1.6rem 0 0;
           text-align: center;
-          padding: 0 1.5rem 11vh;
-          margin: 0;
-        }
-        .intro__kicker {
-          margin: 0 0 0.7rem;
-          color: #E7B84B;
-          font-size: 0.72rem;
-          letter-spacing: 0.28em;
-          text-transform: uppercase;
-        }
-        .intro__title,
-        .intro__word {
-          margin: 0;
           font-family: var(--font-display);
+          font-size: clamp(1.45rem, 5vw, 2.15rem);
           font-weight: 400;
-          letter-spacing: -0.02em;
+          letter-spacing: 0.03em;
+          line-height: 1.05;
           text-transform: uppercase;
-          line-height: 0.95;
         }
-        .intro__title {
-          font-size: clamp(2.2rem, 7vw, 5.4rem);
-        }
-        .intro__word {
-          font-size: clamp(3rem, 10vw, 7rem);
-        }
-        .intro__rule {
-          display: block;
-          width: 3.25rem;
-          height: 2px;
-          margin: 1rem auto 0.85rem;
-          background: #E7B84B;
-        }
-        .intro__lockup .intro__rule {
-          margin: 0.2rem auto;
-        }
-        .intro__count {
-          margin: 0;
-          color: rgba(255,255,255,0.72);
-          font-size: 0.75rem;
-          letter-spacing: 0.22em;
-        }
-        .intro__logo {
-          width: auto;
-          height: 92px;
-          object-fit: contain;
+        @keyframes introSpin {
+          to { transform: rotate(360deg); }
         }
         @keyframes introIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: none; }
         }
         @keyframes introOut {
           to { opacity: 0; visibility: hidden; }
