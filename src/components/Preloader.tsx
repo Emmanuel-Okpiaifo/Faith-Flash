@@ -1,58 +1,63 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
+
+const HOLD_MS = 1000
+const FADE_MS = 400
 
 export function Preloader() {
   const [loading, setLoading] = useState(true)
+  const curveId = `preloader-curve-${useId().replace(/:/g, '')}`
+  const topId = `${curveId}-top`
+  const bottomId = `${curveId}-bottom`
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false)
-    }, 2500)
-    return () => clearTimeout(timer)
+    const timer = window.setTimeout(() => setLoading(false), HOLD_MS + FADE_MS)
+    return () => window.clearTimeout(timer)
   }, [])
 
   if (!loading) return null
 
   return (
-    <div className="preloader">
+    <div className="preloader" role="status" aria-live="polite" aria-label="RCCG The Envoys Faith Flash">
       <div className="preloader__content">
         <div className="preloader__logo">
           <div className="preloader__spinner">
-            <img src="https://www.rccgtheenvoys.org/images/envoys1.png" alt="Logo" className="preloader__icon" />
-             <svg className="preloader__svg" viewBox="0 0 100 100">
-               <path
-                 id="curve"
-                 fill="transparent"
-                 d="M 50, 50 m -37, 0 a 37,37 0 1,1 74,0 a 37,37 0 1,1 -74,0"
-               />
-               <text className="preloader__text">
-                 <textPath xlinkHref="#curve">
-                    RCCG THE ENVOYS • THE SENT ONES • RCCG THE ENVOYS • THE SENT ONES •
-                 </textPath>
-               </text>
-             </svg>
+            <img src="https://www.rccgtheenvoys.org/images/envoys1.png" alt="" className="preloader__icon" />
+            <svg className="preloader__svg" viewBox="0 0 100 100" aria-hidden="true">
+              <path id={topId} fill="none" d="M 8,50 A 42,42 0 0,1 92,50" />
+              <path id={bottomId} fill="none" d="M 16,54 A 34,34 0 0,0 84,54" />
+              <text className="preloader__text" textAnchor="middle">
+                <textPath href={`#${topId}`} startOffset="50%">
+                  RCCG THE ENVOYS
+                </textPath>
+              </text>
+              <text className="preloader__text preloader__text--flash" textAnchor="middle">
+                <textPath href={`#${bottomId}`} startOffset="50%">
+                  FAITH FLASH
+                </textPath>
+              </text>
+            </svg>
           </div>
         </div>
-        <div className="preloader__footer">
-          RCCG THE ENVOYS
-        </div>
+        <p className="preloader__footer">RCCG THE ENVOYS FAITH FLASH</p>
       </div>
       <style>{`
         .preloader {
           position: fixed;
           inset: 0;
-          background: #000;
+          background: #F8F8F6;
           z-index: 9999;
           display: flex;
           align-items: center;
           justify-content: center;
-          animation: fadeOut 0.5s ease 2.2s forwards;
+          animation: fadeOut ${FADE_MS}ms ease ${HOLD_MS}ms forwards;
         }
 
         .preloader__content {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 2rem;
+          gap: 1.75rem;
+          padding: 1.5rem;
         }
 
         .preloader__spinner {
@@ -65,13 +70,13 @@ export function Preloader() {
         }
 
         .preloader__icon {
-          width: 80px;
-          height: 80px;
-          border-radius: 50%;
+          position: relative;
+          z-index: 2;
+          width: auto;
+          height: 58px;
           object-fit: contain;
           object-position: center;
-          background: #000;
-          z-index: 2;
+          background: transparent;
         }
 
         .preloader__svg {
@@ -83,19 +88,25 @@ export function Preloader() {
         .preloader__text {
           fill: var(--color-accent);
           font-family: var(--font-display);
-          font-size: 8px;
-          font-weight: 700;
-          letter-spacing: 1px;
+          font-size: 7px;
+          font-weight: 400;
+          letter-spacing: 1.1px;
           text-transform: uppercase;
         }
 
+        .preloader__text--flash {
+          font-size: 6.5px;
+          letter-spacing: 1.6px;
+        }
+
         .preloader__footer {
+          margin: 0;
           font-family: var(--font-display);
-          letter-spacing: 0.5em;
-          font-size: 0.8rem;
-          color: #fff;
-          opacity: 0.5;
-          animation: pulse 1.5s infinite;
+          letter-spacing: 0.14em;
+          font-size: clamp(0.85rem, 2.6vw, 1.05rem);
+          color: var(--color-text);
+          text-align: center;
+          text-transform: uppercase;
         }
 
         @keyframes rotate {
@@ -105,11 +116,6 @@ export function Preloader() {
 
         @keyframes fadeOut {
           to { opacity: 0; visibility: hidden; }
-        }
-
-        @keyframes pulse {
-          0%, 100% { opacity: 0.3; }
-          50% { opacity: 0.7; }
         }
       `}</style>
     </div>

@@ -4,9 +4,8 @@ import { NavLink, useLocation } from 'react-router-dom'
 
 const nav = [
   { to: '/', label: 'Home' },
-  { to: '/online-tv', label: 'Online TV' },
+  { to: '/online-tv', label: 'Media' },
   { to: '/testimonies', label: 'Testimonies' },
-  { to: '/podcasts', label: 'Audio' },
   { to: '/magazines', label: 'Magazines' },
 ] as const
 
@@ -45,17 +44,12 @@ export function SiteHeader({ scrolled }: SiteHeaderProps) {
   return (
     <header className={`site-header ${scrolled ? 'site-header--scrolled' : ''}`}>
       <div className="site-header__bar">
-        <NavLink to="/" className="site-header__dept" style={{ display: 'flex', alignItems: 'center', gap: '1rem', textDecoration: 'none', minWidth: 0 }}>
+        <NavLink to="/" className="site-header__brand">
           <img
             src="https://www.rccgtheenvoys.org/images/envoys1.png"
-            alt=""
-            width={40}
-            height={40}
-            style={{ height: '40px', width: '40px', borderRadius: '50%', flexShrink: 0, objectFit: 'contain', objectPosition: 'center', background: '#000' }}
+            alt="RCCG The Envoys"
+            className="site-header__logo"
           />
-          <span style={{ fontWeight: 800, letterSpacing: '-0.03em', color: '#fff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-            FAITH FLASH
-          </span>
         </NavLink>
 
         <nav className="site-header__nav" aria-label="Primary">

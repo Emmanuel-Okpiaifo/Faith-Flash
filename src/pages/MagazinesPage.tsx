@@ -1,29 +1,21 @@
 import { Link } from 'react-router-dom'
 import { site } from '../content/site'
 import { appHref } from '../lib/appHref'
+import { PageHero } from '../components/PageHero'
 
 export function MagazinesPage() {
   const magazines = site.magazines
 
   return (
-    <main className="page" style={{ paddingTop: '140px' }}>
+    <>
+      <PageHero
+        eyebrow="The Reading Room"
+        title="Faith Flash Magazines"
+        lede="Print-quality recaps and convention journals from the Faith Flash desk. Open each magazine as a flipbook, right here in your browser."
+      />
       <section className="band">
         <div className="container">
-          <div className="section-heading">
-            <div className="live-pulse">
-              <div className="live-pulse__dot" />
-              The Reading Room
-            </div>
-            <h1 className="section-heading__title">
-              Faith Flash <span style={{ color: 'var(--color-accent)' }}>Magazines</span>
-            </h1>
-            <p className="hero__lede">
-              Print-quality recaps and convention journals from the Faith Flash desk — open each
-              magazine as a 3D flipbook, right here in your browser.
-            </p>
-          </div>
-
-          <div className="magazine-grid">
+          <div className="magazine-grid stagger reveal">
             {magazines.map((m) => (
               <article key={m.slug} className="magazine-card">
                 <Link to={`/magazines/${m.slug}`} className="magazine-card__cover" aria-label={`Open ${m.title} flipbook`}>
@@ -45,14 +37,6 @@ export function MagazinesPage() {
                     <Link to={`/magazines/${m.slug}`} className="btn btn--accent">
                       Read
                     </Link>
-                    <a
-                      href={appHref(m.file)}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="btn btn--outline"
-                    >
-                      PDF
-                    </a>
                   </div>
                 </div>
               </article>
@@ -71,24 +55,21 @@ export function MagazinesPage() {
           margin-inline: auto;
         }
         .magazine-card {
-          background: #0a0a0a;
+          background: #fff;
           border: 1px solid var(--color-line);
-          border-radius: var(--radius);
+          border-radius: var(--radius-lg);
           overflow: hidden;
           display: flex;
           flex-direction: column;
-          transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
         }
         .magazine-card:hover {
-          transform: translateY(-4px);
-          border-color: var(--color-accent);
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 18px rgba(46, 204, 113, 0.1);
+          border-color: rgba(13, 13, 13, 0.2);
         }
         .magazine-card__cover {
           position: relative;
           display: block;
           aspect-ratio: 3/4;
-          background: #000;
+          background: #EFEFEA;
           overflow: hidden;
           text-decoration: none;
         }
@@ -145,7 +126,7 @@ export function MagazinesPage() {
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.08em;
-          color: var(--color-accent);
+          color: var(--color-text-muted);
         }
         .magazine-card__dates {
           margin: 0;
@@ -172,6 +153,6 @@ export function MagazinesPage() {
           }
         }
       `}</style>
-    </main>
+    </>
   )
 }

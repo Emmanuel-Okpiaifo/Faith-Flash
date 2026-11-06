@@ -1,10 +1,8 @@
 import { useNavigate } from 'react-router-dom'
 import { site } from '../content/site'
-import { BroadcastCard } from '../components/BroadcastCard'
 import { TestimonyBubble } from '../components/TestimonyBubble'
 import { MagneticButton } from '../components/MagneticButton'
-import { useVideoModal } from '../context/VideoModalContext'
-import { useEffect, useMemo, useRef } from 'react'
+import { useMemo } from 'react'
 
 type TeamMember = {
   path: string
@@ -24,8 +22,6 @@ const TEAM_IMAGE_EXT = /\.(jpe?g|png|webp)$/i
 
 export function HomePage() {
   const navigate = useNavigate()
-  const { openModal } = useVideoModal()
-  const scrollRefs = useRef<HTMLDivElement[]>([])
   const teamMembers = useMemo<TeamMember[]>(() => {
     return Object.entries(teamAssetModules)
       .filter(([path]) => TEAM_IMAGE_EXT.test(path))
@@ -50,40 +46,18 @@ export function HomePage() {
       })
   }, [])
 
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('reveal--visible')
-          }
-        })
-      },
-      { threshold: 0.1 }
-    )
-
-    scrollRefs.current.forEach((ref) => ref && observer.observe(ref))
-    return () => observer.disconnect()
-  }, [])
-
-  const addToRefs = (el: HTMLDivElement) => {
-    if (el && !scrollRefs.current.includes(el)) {
-      scrollRefs.current.push(el)
-    }
-  }
-
   return (
     <>
       <section className="hero">
-        <h1 className="hero__title">
+        <h1 className="hero__title rise-in">
           Faith Flash
         </h1>
 
-        <div className="hero__mission">
+        <div className="hero__mission rise-in rise-in--2">
           RAISING A<br />SUPERNATURAL ARMY
         </div>
 
-        <div className="hero__visual-container">
+        <div className="hero__visual-container rise-in rise-in--3">
           <img
             src={site.heroImage}
             alt="Faith Flash Hero"
@@ -100,20 +74,33 @@ export function HomePage() {
             </div>
           </div>
         </div>
+      </section>
 
-        <div className="hero__actions">
-          <MagneticButton className="btn--accent" onClick={() => navigate('/online-tv')}>
-            Enter The Faith Hub
-          </MagneticButton>
-          <MagneticButton className="btn--outline" onClick={() => navigate('/testimonies')}>
-            Report Testimony
-          </MagneticButton>
+      <section className="band" id="programs">
+        <div className="container">
+          <div className="section-heading reveal" style={{ textAlign: 'center' }}>
+            <h2 className="section-heading__title">Church Programs</h2>
+            <p className="hero__lede" style={{ marginInline: 'auto' }}>
+              The weekly services at RCCG The Envoys.
+            </p>
+          </div>
+          <div className="announcement-grid stagger reveal">
+            {site.programs.map((item) => (
+              <article key={item.id} className="announcement-card">
+                <div className="announcement-card__content">
+                  <div className="announcement-card__badge">{item.when}</div>
+                  <h3 className="announcement-card__title">{item.title}</h3>
+                  <p className="announcement-card__description">{item.description}</p>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
-      <section className="band reveal meet-team" ref={addToRefs}>
+      <section className="band meet-team">
         <div className="container">
-          <div className="section-heading" style={{ textAlign: 'center' }}>
+          <div className="section-heading reveal" style={{ textAlign: 'center' }}>
             <h2 className="section-heading__title">
               Meet The <span style={{ color: 'var(--color-accent)' }}>Team</span>
             </h2>
@@ -122,7 +109,7 @@ export function HomePage() {
             </p>
           </div>
 
-          <div className="team-grid">
+          <div className="team-grid stagger reveal">
             {teamMembers.map((member) => (
               <article
                 key={member.path}
@@ -163,38 +150,17 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="band reveal" ref={addToRefs}>
+      <section className="band" style={{ background: 'var(--color-bg-alt)' }}>
         <div className="container">
-          <div className="section-heading">
-            <h2 className="section-heading__title">The <span style={{ color: 'var(--color-accent)' }}>Fire Archive</span></h2>
-            <p className="hero__lede">Catch up on every fiery broadcast and spiritual awakening.</p>
-          </div>
-          <div className="tile-grid">
-            {site.episodes.slice(0, 3).map((ep) => (
-              <BroadcastCard
-                key={ep.title}
-                {...ep}
-                onClick={() => openModal(ep)}
-              />
-            ))}
-          </div>
-          <div style={{ marginTop: '4rem', textAlign: 'center' }}>
-            <MagneticButton className="btn--outline" onClick={() => navigate('/online-tv')}>View All Encounters</MagneticButton>
-          </div>
-        </div>
-      </section>
-
-      <section className="band reveal" ref={addToRefs} style={{ background: 'var(--color-bg-alt)' }}>
-        <div className="container">
-          <div className="section-heading" style={{ textAlign: 'center' }}>
+          <div className="section-heading reveal" style={{ textAlign: 'center' }}>
             <h2 className="section-heading__title">Fire <span style={{ color: 'var(--color-accent)' }}>Encounters</span></h2>
           </div>
-          <div className="testimony-wall">
+          <div className="testimony-wall stagger reveal">
             {site.testimonies.slice(0, 2).map((t) => (
               <TestimonyBubble key={t.id} {...t} />
             ))}
           </div>
-          <div style={{ marginTop: '4rem', textAlign: 'center' }}>
+          <div className="reveal" style={{ marginTop: '4rem', textAlign: 'center' }}>
             <MagneticButton className="btn--accent" onClick={() => navigate('/testimonies')}>Join The Fire Wall</MagneticButton>
           </div>
         </div>

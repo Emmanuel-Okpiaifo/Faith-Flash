@@ -121,6 +121,55 @@ export const site = {
     { label: 'Official Envoys Site', href: 'https://www.rccgtheenvoys.org', external: true },
     { label: 'Share Your Testimony', href: 'https://bit.ly/Rccgenvoystestimonies', external: true },
   ],
+  contact: {
+    address: '6a cocoa industries road, ikeja, lagos',
+    email: 'hello@envoys.center',
+    phone: '+2349062134890',
+    phoneHref: 'tel:+2349062134890',
+  },
+  serviceTimes: 'Sundays 12:00 PM · Tuesdays 5:30 PM · Wednesdays 11:00 PM – 2:00 AM',
+  churchLinks: [
+    { label: 'Church home', href: 'https://www.rccgtheenvoys.org' },
+    { label: 'Sermons', href: 'https://www.rccgtheenvoys.org/sermons' },
+    { label: 'Giving', href: 'https://www.rccgtheenvoys.org/giving' },
+    { label: 'Contact', href: 'https://www.rccgtheenvoys.org/contact' },
+  ],
+  socials: [
+    { label: 'Facebook', href: 'https://facebook.com/rccgtheenvoys' },
+    { label: 'Instagram', href: 'https://instagram.com/rccgtheenvoys' },
+    { label: 'YouTube', href: 'https://www.youtube.com/@RCCGTheEnvoys' },
+  ],
+  /**
+   * Google Form that receives “Notify me when live” signups.
+   * Create a form with First name, Last name, and Email, then paste the
+   * formResponse URL and each field’s entry id (entry.123…).
+   */
+  notifyForm: {
+    action: '',
+    firstName: '',
+    lastName: '',
+    email: '',
+  },
+  programs: [
+    {
+      id: 'sunday-service',
+      title: 'Sunday Service',
+      when: 'Sundays · 12:00 PM',
+      description: 'Weekly worship at The Envoys Center, Ikeja.',
+    },
+    {
+      id: 'illumination-service',
+      title: 'Illumination Service',
+      when: 'Tuesdays · 5:30 PM',
+      description: 'The Tuesday service at The Envoys Center, Ikeja.',
+    },
+    {
+      id: 'night-of-mercy',
+      title: 'Night of Mercy',
+      when: 'Wednesdays · 11:00 PM – 2:00 AM',
+      description: 'Midweek gathering at The Envoys Center, Ikeja.',
+    },
+  ],
 } as const
 
 export type Magazine = (typeof site.magazines)[number]

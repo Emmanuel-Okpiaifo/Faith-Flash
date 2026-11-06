@@ -1,9 +1,10 @@
-import { RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { MainLayout } from './layouts/MainLayout'
+import { MediaLayout } from './layouts/MediaLayout'
 import { HomePage } from './pages/HomePage'
 import { OnlineTVPage } from './pages/OnlineTVPage'
+import { AudioPage } from './pages/AudioPage'
 import { TestimoniesPage } from './pages/TestimoniesPage'
-import { PodcastsPage } from './pages/PodcastsPage'
 import { MagazinesPage } from './pages/MagazinesPage'
 import { MagazineViewerPage } from './pages/MagazineViewerPage'
 import { VideoModalProvider } from './context/VideoModalContext'
@@ -16,9 +17,16 @@ const router = createBrowserRouter(
       element: <MainLayout />,
       children: [
         { index: true, element: <HomePage /> },
-        { path: 'online-tv', element: <OnlineTVPage /> },
+        {
+          path: 'online-tv',
+          element: <MediaLayout />,
+          children: [
+            { index: true, element: <OnlineTVPage /> },
+            { path: 'audio', element: <AudioPage /> },
+          ],
+        },
         { path: 'testimonies', element: <TestimoniesPage /> },
-        { path: 'podcasts', element: <PodcastsPage /> },
+        { path: 'podcasts', element: <Navigate to="/online-tv/audio" replace /> },
         { path: 'magazines', element: <MagazinesPage /> },
         { path: 'magazines/:slug', element: <MagazineViewerPage /> },
       ],

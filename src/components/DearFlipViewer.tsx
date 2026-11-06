@@ -103,7 +103,7 @@ export function DearFlipViewer({ pdfUrl, title, height = 720 }: DearFlipViewerPr
         book.setAttribute('id', `dflip_${Math.random().toString(36).slice(2, 10)}`)
         book.setAttribute('height', String(height))
         book.setAttribute('webgl', 'true')
-        book.setAttribute('backgroundcolor', '#0a0a0a')
+        book.setAttribute('backgroundcolor', '#F8F8F6')
         book.setAttribute('autoEnableOutline', 'false')
         book.setAttribute('autoEnableThumbnail', 'false')
         stage.appendChild(book)
@@ -117,7 +117,7 @@ export function DearFlipViewer({ pdfUrl, title, height = 720 }: DearFlipViewerPr
         w.jQuery(book).flipBook(pdfUrl, {
           height,
           webgl: true,
-          backgroundColor: '#0a0a0a',
+          backgroundColor: '#F8F8F6',
           autoEnableOutline: false,
           autoEnableThumbnail: false,
           pageMode: 2,
