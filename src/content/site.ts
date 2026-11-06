@@ -188,27 +188,27 @@ export const site = {
   heroSlides: [
     {
       image: housePhotoClean('IMG-20260906-WA0123.jpg', 1800),
-      imageMobile: housePhotoClean('IMG-20260906-WA0123.jpg', 1400),
+      imageMobile: `${imageKit}/${encodeURI('Envoys News_ Church Stage Presenters.png')}`,
       label: 'Envoys News · The house gathered',
     },
     {
       image: housePhotoClean('IMG-20261004-WA0117.jpg', 1800),
-      imageMobile: housePhotoClean('IMG-20261004-WA0117.jpg', 1400),
+      imageMobile: `${imageKit}/${encodeURI('Prayerful Testimony on a Glowing Stage.png')}`,
       label: 'Testimony · A witness at the pulpit',
     },
     {
       image: housePhotoClean('IMG-20261017-WA0025(1).jpg', 1800),
-      imageMobile: housePhotoClean('IMG-20261017-WA0025(1).jpg', 1400),
+      imageMobile: `${imageKit}/${encodeURI('Engaging Studio Conversation.png')}`,
       label: 'Mercy Convention · Day Three',
     },
     {
       image: housePhotoClean('IMG-20261004-WA0121.jpg', 1800),
-      imageMobile: housePhotoClean('IMG-20261004-WA0121.jpg', 1400),
+      imageMobile: `${imageKit}/${encodeURI('Candid Interview on a Graceful Stage.png')}`,
       label: 'Celebration · Stories shared in the house',
     },
     {
       image: housePhotoClean('IMG-20260816-WA0035.jpg', 1800),
-      imageMobile: housePhotoClean('IMG-20260816-WA0035.jpg', 1400),
+      imageMobile: `${imageKit}/${encodeURI('Tense Porch Conversation.png')}`,
       label: 'Outreach · Compassion beyond these walls',
     },
   ],

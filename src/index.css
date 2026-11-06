@@ -2172,7 +2172,7 @@ h1, h2, h3 {
 @media (max-width: 900px) {
   .house-hero {
     min-height: 0;
-    aspect-ratio: 1.45 / 1;
+    aspect-ratio: 9 / 16;
     max-height: 92vh;
     background: #0d0d0d;
     color: #fff;
