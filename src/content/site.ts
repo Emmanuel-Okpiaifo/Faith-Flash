@@ -105,8 +105,24 @@ export const site = {
       initials: 'EO',
     },
   ],
+  magazines: [
+    {
+      slug: 'royal-mercy-mercy-convention-2026',
+      title: 'Royal Mercy',
+      issue: 'Mercy Convention 2026 Recap',
+      theme: 'Unending Open Doors',
+      dates: '14 – 22 October 2026',
+      status: 'Preview · Work in progress',
+      description:
+        'A recap magazine capturing the Mercy Convention 2026 at RCCG The Envoys, Ikeja. This preview includes the cover, contents page, and Chapter One.',
+      file: '/magazines/royal-mercy-mercy-convention-2026.pdf',
+      accent: '#8E44AD',
+    },
+  ],
   quickLinks: [
     { label: 'Official Envoys Site', href: 'https://www.rccgtheenvoys.org', external: true },
     { label: 'Share Your Testimony', href: 'https://bit.ly/Rccgenvoystestimonies', external: true },
   ],
 } as const
+
+export type Magazine = (typeof site.magazines)[number]

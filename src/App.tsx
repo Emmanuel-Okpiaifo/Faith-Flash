@@ -4,6 +4,8 @@ import { HomePage } from './pages/HomePage'
 import { OnlineTVPage } from './pages/OnlineTVPage'
 import { TestimoniesPage } from './pages/TestimoniesPage'
 import { PodcastsPage } from './pages/PodcastsPage'
+import { MagazinesPage } from './pages/MagazinesPage'
+import { MagazineViewerPage } from './pages/MagazineViewerPage'
 import { VideoModalProvider } from './context/VideoModalContext'
 
 const basenameRaw = import.meta.env.BASE_URL.replace(/\/$/, '')
@@ -17,6 +19,8 @@ const router = createBrowserRouter(
         { path: 'online-tv', element: <OnlineTVPage /> },
         { path: 'testimonies', element: <TestimoniesPage /> },
         { path: 'podcasts', element: <PodcastsPage /> },
+        { path: 'magazines', element: <MagazinesPage /> },
+        { path: 'magazines/:slug', element: <MagazineViewerPage /> },
       ],
     },
   ],
