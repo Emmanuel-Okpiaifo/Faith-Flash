@@ -18,41 +18,32 @@ export function MagazinesPage() {
               Faith Flash <span style={{ color: 'var(--color-accent)' }}>Magazines</span>
             </h1>
             <p className="hero__lede">
-              Print-quality recaps, convention journals, and announcements from the Faith Flash desk —
-              open each magazine as a 3D flipbook, right here in your browser.
+              Print-quality recaps and convention journals from the Faith Flash desk — open each
+              magazine as a 3D flipbook, right here in your browser.
             </p>
           </div>
 
           <div className="magazine-grid">
             {magazines.map((m) => (
               <article key={m.slug} className="magazine-card">
-                <div
-                  className="magazine-card__cover"
-                  style={{
-                    background: `linear-gradient(145deg, ${m.accent} 0%, #0a0a0a 85%)`,
-                  }}
-                  aria-hidden
-                >
-                  <span className="magazine-card__issue">{m.issue}</span>
-                  <h2 className="magazine-card__title">{m.title}</h2>
-                  <span className="magazine-card__theme">{m.theme}</span>
-                </div>
+                <Link to={`/magazines/${m.slug}`} className="magazine-card__cover" aria-label={`Open ${m.title} flipbook`}>
+                  <img
+                    src={appHref(m.cover)}
+                    alt={`${m.title} cover`}
+                    className="magazine-card__cover-img"
+                    loading="lazy"
+                  />
+                  <span className="magazine-card__open-badge" aria-hidden>
+                    Open flipbook →
+                  </span>
+                </Link>
                 <div className="magazine-card__content">
-                  <p className="magazine-card__status">{m.status}</p>
-                  <p className="magazine-card__description">{m.description}</p>
-                  <dl className="magazine-card__meta">
-                    <div>
-                      <dt>Convention</dt>
-                      <dd>{m.issue}</dd>
-                    </div>
-                    <div>
-                      <dt>Dates</dt>
-                      <dd>{m.dates}</dd>
-                    </div>
-                  </dl>
+                  <h2 className="magazine-card__title">{m.title}</h2>
+                  <p className="magazine-card__issue">{m.issue}</p>
+                  <p className="magazine-card__dates">{m.dates}</p>
                   <div className="magazine-card__actions">
                     <Link to={`/magazines/${m.slug}`} className="btn btn--accent">
-                      Open Flipbook
+                      Read
                     </Link>
                     <a
                       href={appHref(m.file)}
@@ -60,7 +51,7 @@ export function MagazinesPage() {
                       rel="noreferrer"
                       className="btn btn--outline"
                     >
-                      Download PDF
+                      PDF
                     </a>
                   </div>
                 </div>
@@ -73,117 +64,112 @@ export function MagazinesPage() {
       <style>{`
         .magazine-grid {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-          gap: 2rem;
+          grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+          gap: 1.75rem;
           margin-top: 2.5rem;
+          max-width: 1100px;
+          margin-inline: auto;
         }
         .magazine-card {
           background: #0a0a0a;
           border: 1px solid var(--color-line);
-          border-radius: var(--radius-lg);
+          border-radius: var(--radius);
           overflow: hidden;
           display: flex;
           flex-direction: column;
           transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
         }
         .magazine-card:hover {
-          transform: translateY(-6px);
+          transform: translateY(-4px);
           border-color: var(--color-accent);
-          box-shadow: var(--shadow-huge), 0 0 20px rgba(46, 204, 113, 0.12);
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 18px rgba(46, 204, 113, 0.1);
         }
         .magazine-card__cover {
-          aspect-ratio: 3/4;
           position: relative;
-          padding: 2rem;
+          display: block;
+          aspect-ratio: 3/4;
+          background: #000;
+          overflow: hidden;
+          text-decoration: none;
+        }
+        .magazine-card__cover-img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center;
+          display: block;
+          transition: transform 0.4s ease;
+        }
+        .magazine-card:hover .magazine-card__cover-img {
+          transform: scale(1.03);
+        }
+        .magazine-card__open-badge {
+          position: absolute;
+          left: 0.75rem;
+          bottom: 0.75rem;
+          background: rgba(0, 0, 0, 0.72);
+          backdrop-filter: blur(6px);
+          color: #fff;
+          font-size: 0.72rem;
+          font-weight: 600;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          padding: 0.4rem 0.7rem;
+          border-radius: 999px;
+          opacity: 0;
+          transform: translateY(6px);
+          transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+        .magazine-card:hover .magazine-card__open-badge,
+        .magazine-card:focus-within .magazine-card__open-badge {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        .magazine-card__content {
+          padding: 1rem 1.1rem 1.15rem;
           display: flex;
           flex-direction: column;
-          justify-content: flex-end;
-          color: #fff;
-          overflow: hidden;
-        }
-        .magazine-card__cover::after {
-          content: '';
-          position: absolute;
-          inset: 0;
-          background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.18), transparent 55%);
-          pointer-events: none;
-        }
-        .magazine-card__issue {
-          font-family: var(--font-sub);
-          font-size: 0.8rem;
-          text-transform: uppercase;
-          letter-spacing: 0.18em;
-          color: rgba(255, 255, 255, 0.85);
-          margin-bottom: 0.75rem;
+          gap: 0.35rem;
         }
         .magazine-card__title {
           font-family: var(--font-display);
-          font-size: clamp(2rem, 4vw, 2.8rem);
-          line-height: 1;
+          font-size: 1.4rem;
+          line-height: 1.1;
           letter-spacing: 0.01em;
-          margin: 0 0 0.75rem 0;
+          margin: 0;
+          color: var(--color-text);
         }
-        .magazine-card__theme {
-          font-family: var(--font-sub);
-          font-size: 0.95rem;
-          letter-spacing: 0.05em;
-          color: rgba(255, 255, 255, 0.9);
-        }
-        .magazine-card__content {
-          padding: 1.75rem;
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-          flex-grow: 1;
-        }
-        .magazine-card__status {
-          font-size: 0.75rem;
+        .magazine-card__issue {
+          margin: 0;
+          font-size: 0.78rem;
           font-weight: 600;
           text-transform: uppercase;
           letter-spacing: 0.08em;
           color: var(--color-accent);
-          margin: 0;
         }
-        .magazine-card__description {
+        .magazine-card__dates {
+          margin: 0;
+          font-size: 0.8rem;
           color: var(--color-text-muted);
-          line-height: 1.55;
-          margin: 0;
-        }
-        .magazine-card__meta {
-          display: grid;
-          gap: 0.75rem;
-          margin: 0;
-          padding: 1rem 0 0 0;
-          border-top: 1px solid var(--color-line);
-        }
-        .magazine-card__meta > div {
-          display: flex;
-          justify-content: space-between;
-          gap: 1rem;
-          font-size: 0.85rem;
-        }
-        .magazine-card__meta dt {
-          color: var(--color-text-muted);
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          font-size: 0.75rem;
-        }
-        .magazine-card__meta dd {
-          color: var(--color-text);
-          margin: 0;
-          text-align: right;
         }
         .magazine-card__actions {
           display: flex;
-          gap: 0.75rem;
-          flex-wrap: wrap;
-          margin-top: auto;
-          padding-top: 0.5rem;
+          gap: 0.5rem;
+          margin-top: 0.75rem;
         }
         .magazine-card__actions .btn {
-          padding: 0.75rem 1.25rem;
-          font-size: 0.85rem;
+          padding: 0.5rem 0.9rem;
+          font-size: 0.75rem;
           text-decoration: none;
+          flex: 1;
+          text-align: center;
+        }
+
+        @media (max-width: 480px) {
+          .magazine-grid {
+            grid-template-columns: 1fr;
+            max-width: 320px;
+          }
         }
       `}</style>
     </main>
