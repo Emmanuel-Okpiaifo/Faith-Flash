@@ -25,7 +25,7 @@ export const site = {
   department: 'Faith Flash',
   desk: 'Faith Flash is the announcements and testimony desk of RCCG The Envoys, Ikeja.',
   churchWord: 'We Are Sent To Nations',
-  tagline: 'WE ARE THE SENT ONES — RAISING A SUPERNATURAL ARMY DEPLOYED INTO EVERY SPHERE.',
+  tagline: 'WE ARE THE SENT ONES. RAISING A SUPERNATURAL ARMY DEPLOYED INTO EVERY SPHERE.',
   vision:
     'We are the heart that embraces all with love: the voice that speaks change into people with hope, comfort, and peace. Showcasing radical faith through our conviction.',
   shareImage: housePhoto('IMG-20260906-WA0123.jpg'),
@@ -38,7 +38,7 @@ export const site = {
   // Faith Flash specific podcast videos
   episodes: [
     {
-      title: 'FAITH FLASH PODCAST — Marketplace Manifestation',
+      title: 'FAITH FLASH PODCAST: Marketplace Manifestation',
       videoId: 'dQw4w9WgXcQ',
       date: '2026-04-27',
       category: 'PODCAST',
@@ -46,7 +46,7 @@ export const site = {
       description: 'Dominating your sphere of influence with supernatural authority.',
     },
     {
-      title: 'FAITH FLASH PODCAST — Spiritual Intelligence',
+      title: 'FAITH FLASH PODCAST: Spiritual Intelligence',
       videoId: 'dQw4w9WgXcQ',
       date: '2026-04-20',
       category: 'PODCAST',
@@ -54,7 +54,7 @@ export const site = {
       description: 'Deeply rooted in God’s Word to manifest Kingdom wisdom in the marketplace.',
     },
     {
-      title: 'FAITH FLASH PODCAST — Global Deployment',
+      title: 'FAITH FLASH PODCAST: Global Deployment',
       videoId: 'dQw4w9WgXcQ',
       date: '2026-04-13',
       category: 'PODCAST',
@@ -62,7 +62,7 @@ export const site = {
       description: 'The fire spreading across nations as we deploy the King’s peculiar troop.',
     },
     {
-      title: 'FAITH FLASH PODCAST — Supernatural Encounter',
+      title: 'FAITH FLASH PODCAST: Supernatural Encounter',
       videoId: 'dQw4w9WgXcQ',
       date: '2026-04-06',
       category: 'PODCAST',
@@ -130,7 +130,7 @@ export const site = {
       slug: 'unending-open-doors-mercy-convention-2026',
       title: 'Unending Open Doors',
       issue: 'Mercy Convention 2026 Recap',
-      dates: '14 – 22 October 2026',
+      dates: '14 to 22 October 2026',
       description:
         'A recap magazine capturing the Mercy Convention 2026 at RCCG The Envoys, Ikeja.',
       file: '/magazines/unending-open-doors-mercy-convention-2026.pdf',
@@ -147,7 +147,7 @@ export const site = {
     phone: '+2349062134890',
     phoneHref: 'tel:+2349062134890',
   },
-  serviceTimes: 'Sundays 12:00 PM · Tuesdays 5:30 PM · Wednesdays 11:00 PM – 2:00 AM',
+  serviceTimes: 'Sundays 12:00 PM · Tuesdays 5:30 PM · Wednesdays 11:00 PM to 2:00 AM',
   churchLinks: [
     { label: 'Church home', href: 'https://www.rccgtheenvoys.org' },
     { label: 'Sermons', href: 'https://www.rccgtheenvoys.org/sermons' },
@@ -228,7 +228,7 @@ export const site = {
     {
       id: 'night-of-mercy',
       title: 'Night of Mercy',
-      when: 'Wednesdays · 11:00 PM – 2:00 AM',
+      when: 'Wednesdays · 11:00 PM to 2:00 AM',
       description: 'Midweek gathering at The Envoys Center, Ikeja.',
     },
   ],

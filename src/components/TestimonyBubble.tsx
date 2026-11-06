@@ -87,7 +87,7 @@ export function TestimonyBubble({ name, quote, initials }: TestimonyBubbleProps)
             </button>
 
             <div>
-              <p className="testimony-modal__eyebrow">Fire encounter</p>
+              <p className="testimony-modal__eyebrow">Testimony</p>
               <h2 id="testimony-modal-title" className="testimony-modal__title">
                 {name}
               </h2>

@@ -136,7 +136,7 @@ export function HomePage() {
       <section className="band" style={{ background: 'var(--color-bg-alt)' }}>
         <div className="container">
           <div className="section-heading reveal" style={{ textAlign: 'center' }}>
-            <h2 className="section-heading__title">Fire <span style={{ color: 'var(--color-accent)' }}>Encounters</span></h2>
+            <h2 className="section-heading__title">Testimonies</h2>
           </div>
           <div className="testimony-wall stagger reveal">
             {site.testimonies.slice(0, 2).map((t) => (
@@ -144,7 +144,7 @@ export function HomePage() {
             ))}
           </div>
           <div className="reveal" style={{ marginTop: '4rem', textAlign: 'center' }}>
-            <MagneticButton className="btn--accent" onClick={() => navigate('/testimonies')}>Join The Fire Wall</MagneticButton>
+            <MagneticButton className="btn--accent" onClick={() => navigate('/testimonies')}>Join The Testimonies Wall</MagneticButton>
           </div>
         </div>
       </section>

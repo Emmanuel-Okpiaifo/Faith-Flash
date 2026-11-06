@@ -4,20 +4,18 @@ import { Seo } from '../components/Seo'
 import { TestimonyBubble } from '../components/TestimonyBubble'
 
 export function TestimoniesPage() {
-  const count = site.testimonies.length
-
   return (
     <>
       <Seo
-        title="Fire Encounters | Testimonies | Faith Flash | RCCG The Envoys"
-        description="Fire Encounters gathers testimonies from RCCG The Envoys, Ikeja. Read how God is moving in the house, and share your own testimony with Faith Flash."
+        title="Testimonies | Faith Flash | RCCG The Envoys"
+        description="The Testimonies Wall gathers stories from RCCG The Envoys, Ikeja. Read how God is moving in the house, and share your own testimony with Faith Flash."
         path="/testimonies"
-        keywords="RCCG The Envoys testimonies, Fire Encounters, Faith Flash testimonies, Night of Mercy testimony, Ikeja church testimonies"
+        keywords="RCCG The Envoys testimonies, Testimonies Wall, Faith Flash testimonies, Night of Mercy testimony, Ikeja church testimonies"
       />
       <PageHero
-        eyebrow="The Fire Wall"
-        title="Fire Encounters"
-        lede={`${count} stories of faith on record. Every testimony is a reminder that God is still moving — evidence that faith finds expression.`}
+        eyebrow="The Testimonies Wall"
+        title="Testimonies"
+        lede="Stories of faith on record. Evidence that God is still moving, and that faith finds expression."
       />
 
       <section className="band">

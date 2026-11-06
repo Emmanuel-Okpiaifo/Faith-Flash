@@ -21,7 +21,7 @@ export function Hero() {
       </div>
       <div className="hero__media" aria-hidden>
         <div className="hero__video-placeholder">
-          <span>Hero video or image — replace in Hero.tsx or add background asset</span>
+          <span>Hero video or image. Replace in Hero.tsx or add a background asset</span>
         </div>
       </div>
     </section>
