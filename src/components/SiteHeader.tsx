@@ -7,6 +7,7 @@ const nav = [
   { to: '/online-tv', label: 'Online TV' },
   { to: '/testimonies', label: 'Testimonies' },
   { to: '/podcasts', label: 'Audio' },
+  { to: '/magazines', label: 'Magazines' },
 ] as const
 
 interface SiteHeaderProps {
