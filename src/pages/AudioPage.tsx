@@ -1,3 +1,4 @@
+import { site } from '../content/site'
 import { PageHero } from '../components/PageHero'
 import { Seo } from '../components/Seo'
 
@@ -6,9 +7,10 @@ export function AudioPage() {
     <>
       <Seo
         title="Audio | Faith Flash | RCCG The Envoys"
-        description="Faith Flash Audio from RCCG The Envoys, Ikeja. Conversations and teachings from the house will appear here when episodes are ready."
+        description="Faith Flash Audio from RCCG The Envoys. Conversations and teachings from the house will appear here when episodes are ready."
         path="/online-tv/audio"
-        keywords="Faith Flash podcast, Faith Flash audio, RCCG The Envoys, Ikeja church teachings"
+        keywords="Faith Flash podcast, Faith Flash audio, RCCG The Envoys"
+        image={site.logo}
       />
       <PageHero
         eyebrow="Audio"

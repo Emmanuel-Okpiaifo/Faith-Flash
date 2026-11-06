@@ -8,9 +8,10 @@ export function TestimoniesPage() {
     <>
       <Seo
         title="Testimonies | Faith Flash | RCCG The Envoys"
-        description="The Testimonies Wall gathers stories from RCCG The Envoys, Ikeja. Read how God is moving in the house, and share your own testimony with Faith Flash."
+        description="The Testimonies Wall gathers stories from RCCG The Envoys. Read how God is moving in the house, and share your own testimony with Faith Flash."
         path="/testimonies"
-        keywords="RCCG The Envoys testimonies, Testimonies Wall, Faith Flash testimonies, Night of Mercy testimony, Ikeja church testimonies"
+        keywords="RCCG The Envoys testimonies, Testimonies Wall, Faith Flash testimonies, Night of Mercy testimony"
+        image={site.logo}
       />
       <PageHero
         eyebrow="The Testimonies Wall"

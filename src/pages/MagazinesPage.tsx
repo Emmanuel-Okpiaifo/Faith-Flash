@@ -13,7 +13,8 @@ export function MagazinesPage() {
         title="Magazines | Faith Flash | RCCG The Envoys"
         description="Read Faith Flash magazines from RCCG The Envoys, including the Mercy Convention 2026 recap Unending Open Doors. Open each issue as a flipbook in your browser."
         path="/magazines"
-        keywords="Faith Flash magazine, Unending Open Doors, Mercy Convention 2026 magazine, RCCG The Envoys recap, church magazine Ikeja"
+        keywords="Faith Flash magazine, Unending Open Doors, Mercy Convention 2026 magazine, RCCG The Envoys recap"
+        image={appHref(magazines[0]?.cover ?? site.logo)}
       />
       <PageHero
         eyebrow="The Reading Room"

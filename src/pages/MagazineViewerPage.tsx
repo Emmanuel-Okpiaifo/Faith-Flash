@@ -86,7 +86,7 @@ export function MagazineViewerPage() {
     <>
       <Seo
         title="Unending Open Doors | Mercy Convention 2026 | Faith Flash"
-        description="Open Unending Open Doors, the Faith Flash recap magazine for Mercy Convention 2026 at RCCG The Envoys, Ikeja, held 14 to 22 October 2026."
+        description="Open Unending Open Doors, the Faith Flash recap magazine for Mercy Convention 2026 at RCCG The Envoys, held 14 to 22 October 2026."
         path={`/magazines/${magazine.slug}`}
         keywords="Unending Open Doors, Mercy Convention 2026, Faith Flash magazine, RCCG The Envoys, Pastor Daniel Olawande, Dr. Nifemi Olawande"
         image={appHref(magazine.cover)}

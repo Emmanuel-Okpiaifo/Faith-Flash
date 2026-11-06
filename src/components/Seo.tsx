@@ -76,7 +76,7 @@ export const homeJsonLd = {
   publisher: {
     '@type': 'Organization',
     name: 'Faith Flash',
-    description: 'The announcements and testimony desk of RCCG The Envoys, Ikeja. Not a separate church.',
+    description: 'The announcements and testimony desk of RCCG The Envoys. Not a separate church.',
     url: `${siteOrigin}/`,
     parentOrganization: {
       '@type': 'Organization',

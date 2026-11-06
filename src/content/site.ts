@@ -23,7 +23,7 @@ export const siteOrigin = 'https://faith-flash.netlify.app'
 export const site = {
   church: 'RCCG The Envoys',
   department: 'Faith Flash',
-  desk: 'Faith Flash is the announcements and testimony desk of RCCG The Envoys, Ikeja.',
+  desk: 'Faith Flash is the announcements and testimony desk of RCCG The Envoys.',
   churchWord: 'We Are Sent To Nations',
   tagline: 'WE ARE THE SENT ONES. RAISING A SUPERNATURAL ARMY DEPLOYED INTO EVERY SPHERE.',
   vision:

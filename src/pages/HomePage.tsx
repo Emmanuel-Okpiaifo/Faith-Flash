@@ -52,9 +52,10 @@ export function HomePage() {
     <>
       <Seo
         title="Faith Flash | Announcements and Testimonies | RCCG The Envoys"
-        description="Faith Flash is the announcements and testimony desk of RCCG The Envoys, Ikeja. This is where faith finds expression through the news of the house, testimonies, and magazines."
+        description="Faith Flash is the announcements and testimony desk of RCCG The Envoys. This is where faith finds expression through the news of the house, testimonies, and magazines."
         path="/"
-        keywords="Faith Flash, RCCG The Envoys, Ikeja church, testimonies, church announcements, We Are Sent To Nations, Night of Mercy, Pastor Daniel Olawande"
+        keywords="Faith Flash, RCCG The Envoys, testimonies, church announcements, We Are Sent To Nations, Night of Mercy, Pastor Daniel Olawande"
+        image={site.shareImage}
         jsonLd={homeJsonLd}
       />
       <HouseHero />

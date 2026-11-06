@@ -1,3 +1,4 @@
+import { site } from '../content/site'
 import { NotifyForm } from '../components/NotifyForm'
 import { PageHero } from '../components/PageHero'
 import { Seo } from '../components/Seo'
@@ -7,9 +8,10 @@ export function OnlineTVPage() {
     <>
       <Seo
         title="Online TV | Faith Flash | RCCG The Envoys"
-        description="Watch Faith Flash Online TV from RCCG The Envoys, Ikeja. Livestreams and house features will live here when they are ready."
+        description="Watch Faith Flash Online TV from RCCG The Envoys. Livestreams and house features will live here when they are ready."
         path="/online-tv"
-        keywords="Faith Flash Online TV, RCCG The Envoys live, Ikeja church livestream, Envoys YouTube"
+        keywords="Faith Flash Online TV, RCCG The Envoys live, Envoys YouTube"
+        image={site.logo}
       />
       <PageHero
         eyebrow="Online TV"
