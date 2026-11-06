@@ -31,9 +31,9 @@ export function MagazineViewerPage() {
 
   const pdfUrl = appHref(magazine.file)
   const stageRef = useRef<HTMLDivElement>(null)
-  const scrollToMagazine = useCallback(() => {
+  const scrollToMagazine = useCallback((): (() => void) => {
     const stage = stageRef.current
-    if (!stage) return
+    if (!stage) return () => {}
     const target = () => {
       const node = stageRef.current
       if (!node) return window.scrollY
