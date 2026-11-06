@@ -75,13 +75,29 @@ function ensureDflipLoaded(): Promise<void> {
   return w.__dflipLoader__
 }
 
+interface FlipBook {
+  resize?: () => void
+  setPageMode?: (single: boolean) => void
+  height?: (value: number) => void
+}
+
 interface DearFlipViewerProps {
   pdfUrl: string
   title: string
-  height?: number
 }
 
-export function DearFlipViewer({ pdfUrl, title, height = 720 }: DearFlipViewerProps) {
+function pageModeFor(width: number) {
+  return width < 960 ? 1 : 2
+}
+
+function viewerHeight(width: number) {
+  const single = width < 960
+  const fromWidth = width * (single ? 1.42 : 0.76)
+  const fromScreen = Math.max(480, window.innerHeight * 0.82)
+  return Math.round(Math.min(fromWidth, fromScreen))
+}
+
+export function DearFlipViewer({ pdfUrl, title }: DearFlipViewerProps) {
   const stageRef = useRef<HTMLDivElement>(null)
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
   const [errorMsg, setErrorMsg] = useState<string>('')
@@ -98,10 +114,10 @@ export function DearFlipViewer({ pdfUrl, title, height = 720 }: DearFlipViewerPr
 
         stage.innerHTML = ''
         const book = document.createElement('div')
+        const width = stage.clientWidth || window.innerWidth
         book.className = '_df_book'
         book.setAttribute('source', pdfUrl)
         book.setAttribute('id', `dflip_${Math.random().toString(36).slice(2, 10)}`)
-        book.setAttribute('height', String(height))
         book.setAttribute('webgl', 'true')
         book.setAttribute('backgroundcolor', '#F8F8F6')
         book.setAttribute('autoEnableOutline', 'false')
@@ -109,21 +125,55 @@ export function DearFlipViewer({ pdfUrl, title, height = 720 }: DearFlipViewerPr
         stage.appendChild(book)
 
         const w = window as DflipWindow & {
-          jQuery?: ((el: Element) => { flipBook: (url: string, opts: unknown) => unknown })
+          jQuery?: ((el: Element) => { flipBook: (url: string, opts: unknown) => FlipBook })
         }
         if (typeof w.jQuery !== 'function') {
           throw new Error('DearFlip runtime unavailable')
         }
-        w.jQuery(book).flipBook(pdfUrl, {
-          height,
+        const flip = w.jQuery(book).flipBook(pdfUrl, {
+          height: viewerHeight(width),
           webgl: true,
           backgroundColor: '#F8F8F6',
           autoEnableOutline: false,
           autoEnableThumbnail: false,
-          pageMode: 2,
+          pageMode: pageModeFor(width),
+          singlePageMode: 1,
+          paddingTop: 8,
+          paddingBottom: 8,
+          paddingLeft: 0,
+          paddingRight: 0,
+          forceFit: true,
         })
 
+        let mode = pageModeFor(width)
+        let resizeTimer = 0
+        const fit = () => {
+          const nextWidth = stage.clientWidth || window.innerWidth
+          const nextMode = pageModeFor(nextWidth)
+          if (nextMode !== mode) {
+            flip.setPageMode?.(nextMode === 1)
+            mode = nextMode
+          }
+          flip.height?.(viewerHeight(nextWidth))
+        }
+        const onResize = () => {
+          window.clearTimeout(resizeTimer)
+          resizeTimer = window.setTimeout(fit, 120)
+        }
+        const observer = new ResizeObserver(onResize)
+        observer.observe(stage)
+        window.addEventListener('resize', onResize)
+        const settle = window.setTimeout(fit, 400)
+
         setStatus('ready')
+        const stop = () => {
+          window.clearTimeout(resizeTimer)
+          window.clearTimeout(settle)
+          observer.disconnect()
+          window.removeEventListener('resize', onResize)
+        }
+        if (cancelled) stop()
+        ;(stage as HTMLDivElement & { __dflipStop?: () => void }).__dflipStop = stop
       } catch (err) {
         if (cancelled) return
         setErrorMsg(err instanceof Error ? err.message : 'Unable to load flipbook')
@@ -133,9 +183,12 @@ export function DearFlipViewer({ pdfUrl, title, height = 720 }: DearFlipViewerPr
 
     return () => {
       cancelled = true
+      const node = stage as HTMLDivElement & { __dflipStop?: () => void }
+      node.__dflipStop?.()
+      node.__dflipStop = undefined
       if (stage) stage.innerHTML = ''
     }
-  }, [pdfUrl, height])
+  }, [pdfUrl])
 
   return (
     <div className="dearflip" aria-label={`${title} flipbook`}>

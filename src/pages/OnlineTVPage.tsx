@@ -1,37 +1,30 @@
 import { NotifyForm } from '../components/NotifyForm'
 import { PageHero } from '../components/PageHero'
+import { Seo } from '../components/Seo'
 
 export function OnlineTVPage() {
   return (
     <>
+      <Seo
+        title="Online TV | Faith Flash | RCCG The Envoys"
+        description="Watch Faith Flash Online TV from RCCG The Envoys, Ikeja. Livestreams and house features will live here when they are ready."
+        path="/online-tv"
+        keywords="Faith Flash Online TV, RCCG The Envoys live, Ikeja church livestream, Envoys YouTube"
+      />
       <PageHero
-        eyebrow="Podcasts"
-        title="Faith Flash Podcasts"
-        lede="Conversations that heal. Teachings that guide. Messages recorded straight from the fire of revival."
+        eyebrow="Online TV"
+        title="Faith Flash Online TV"
+        lede="Livestreams and house features from RCCG The Envoys will live here when they are ready."
       />
 
       <section className="band" id="podcasts">
         <div className="container">
           <div className="coming-soon-container">
             <div className="coming-soon-card reveal">
-              <h2 className="coming-soon-title">Podcast Series Coming Soon</h2>
+              <h2 className="coming-soon-title">Being prepared</h2>
               <p className="coming-soon-text">
-                We're preparing transformative conversations with Kingdom leaders, marketplace prophets, and fire-carriers. Episodes are in production and will debut soon.
+                Faith Flash Online TV is not on air yet. Leave your name and we will write when a livestream or house feature is ready.
               </p>
-              <div className="coming-soon-details">
-                <div className="detail-item">
-                  <span className="detail-label">Series</span>
-                  <span className="detail-value">UPGRADE • WISDOM • ENCOUNTER</span>
-                </div>
-                <div className="detail-item">
-                  <span className="detail-label">Format</span>
-                  <span className="detail-value">30-40 min deep-dive conversations</span>
-                </div>
-                <div className="detail-item">
-                  <span className="detail-label">Release</span>
-                  <span className="detail-value">Weekly • Every Friday</span>
-                </div>
-              </div>
               <NotifyForm />
             </div>
           </div>

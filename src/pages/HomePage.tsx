@@ -2,6 +2,8 @@ import { useNavigate } from 'react-router-dom'
 import { site } from '../content/site'
 import { TestimonyBubble } from '../components/TestimonyBubble'
 import { MagneticButton } from '../components/MagneticButton'
+import { HouseHero } from '../components/HouseHero'
+import { Seo, homeJsonLd } from '../components/Seo'
 import { useMemo } from 'react'
 
 type TeamMember = {
@@ -48,40 +50,21 @@ export function HomePage() {
 
   return (
     <>
-      <section className="hero">
-        <h1 className="hero__title rise-in">
-          Faith Flash
-        </h1>
-
-        <div className="hero__mission rise-in rise-in--2">
-          RAISING A<br />SUPERNATURAL ARMY
-        </div>
-
-        <div className="hero__visual-container rise-in rise-in--3">
-          <img
-            src={site.heroImage}
-            alt="Faith Flash Hero"
-            className="hero__image"
-          />
-
-          <div className="hero__floating-card">
-            <div className="hero__card-header">
-              This is where Faith finds Expression
-            </div>
-            <div className="hero__card-body">
-              <h3 className="hero__card-title">Envoys Heartbeat</h3>
-              <p className="hero__card-meta">Where stories breathe and voices rise!</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <Seo
+        title="Faith Flash | Announcements and Testimonies | RCCG The Envoys"
+        description="Faith Flash is the announcements and testimony desk of RCCG The Envoys, Ikeja. This is where faith finds expression through the news of the house, testimonies, and magazines."
+        path="/"
+        keywords="Faith Flash, RCCG The Envoys, Ikeja church, testimonies, church announcements, We Are Sent To Nations, Night of Mercy, Pastor Daniel Olawande"
+        jsonLd={homeJsonLd}
+      />
+      <HouseHero />
 
       <section className="band" id="programs">
         <div className="container">
           <div className="section-heading reveal" style={{ textAlign: 'center' }}>
             <h2 className="section-heading__title">Church Programs</h2>
             <p className="hero__lede" style={{ marginInline: 'auto' }}>
-              The weekly services at RCCG The Envoys.
+              The weekly services at RCCG The Envoys. {site.churchWord}.
             </p>
           </div>
           <div className="announcement-grid stagger reveal">

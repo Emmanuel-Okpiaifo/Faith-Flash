@@ -1,120 +1,173 @@
-import { useEffect, useId, useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
+import { site } from '../content/site'
 
-const HOLD_MS = 1000
-const FADE_MS = 400
+const PHOTO_MS = 1800
+const LOCK_MS = 1400
+const FADE_MS = 500
+
+function prefersStill() {
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches
+}
 
 export function Preloader() {
-  const [loading, setLoading] = useState(true)
-  const curveId = `preloader-curve-${useId().replace(/:/g, '')}`
-  const topId = `${curveId}-top`
-  const bottomId = `${curveId}-bottom`
+  const { pathname } = useLocation()
+  const [active, setActive] = useState(() => pathname === '/' && !prefersStill())
+  const [beat, setBeat] = useState(0)
+  const [closing, setClosing] = useState(false)
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setLoading(false), HOLD_MS + FADE_MS)
-    return () => window.clearTimeout(timer)
-  }, [])
+    if (!active) return
+    const previous = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    site.intro.forEach((slide) => {
+      const img = new Image()
+      img.src = slide.image
+    })
+    return () => {
+      document.body.style.overflow = previous
+    }
+  }, [active])
 
-  if (!loading) return null
+  useEffect(() => {
+    if (!active || closing) return
+    const delay = beat < site.intro.length ? PHOTO_MS : LOCK_MS
+    const timer = window.setTimeout(() => {
+      if (beat < site.intro.length) {
+        setBeat((current) => current + 1)
+        return
+      }
+      setClosing(true)
+    }, delay)
+    return () => window.clearTimeout(timer)
+  }, [active, beat, closing])
+
+  useEffect(() => {
+    if (!closing) return
+    const timer = window.setTimeout(() => setActive(false), FADE_MS)
+    return () => window.clearTimeout(timer)
+  }, [closing])
+
+  if (!active) return null
+
+  const photo = beat < site.intro.length ? site.intro[beat] : null
 
   return (
-    <div className="preloader" role="status" aria-live="polite" aria-label="RCCG The Envoys Faith Flash">
-      <div className="preloader__content">
-        <div className="preloader__logo">
-          <div className="preloader__spinner">
-            <img src="https://www.rccgtheenvoys.org/images/envoys1.png" alt="" className="preloader__icon" />
-            <svg className="preloader__svg" viewBox="0 0 100 100" aria-hidden="true">
-              <path id={topId} fill="none" d="M 8,50 A 42,42 0 0,1 92,50" />
-              <path id={bottomId} fill="none" d="M 16,54 A 34,34 0 0,0 84,54" />
-              <text className="preloader__text" textAnchor="middle">
-                <textPath href={`#${topId}`} startOffset="50%">
-                  RCCG THE ENVOYS
-                </textPath>
-              </text>
-              <text className="preloader__text preloader__text--flash" textAnchor="middle">
-                <textPath href={`#${bottomId}`} startOffset="50%">
-                  FAITH FLASH
-                </textPath>
-              </text>
-            </svg>
-          </div>
+    <div className={`intro${closing ? ' intro--out' : ''}`} role="status" aria-live="polite" aria-label="Faith Flash">
+      {photo ? (
+        <figure className="intro__frame" key={photo.caption}>
+          <img src={photo.image} alt="" className="intro__photo" />
+          <figcaption className="intro__caption">
+            <p className="intro__kicker">RCCG THE ENVOYS</p>
+            <p className="intro__title">{photo.caption}</p>
+            <span className="intro__rule" />
+            <p className="intro__count">
+              {beat + 1} / {site.intro.length}
+            </p>
+          </figcaption>
+        </figure>
+      ) : (
+        <div className="intro__lockup">
+          <img src={site.logo} alt="RCCG The Envoys" className="intro__logo" />
+          <span className="intro__rule" />
+          <p className="intro__word">FAITH FLASH</p>
         </div>
-        <p className="preloader__footer">RCCG THE ENVOYS FAITH FLASH</p>
-      </div>
+      )}
       <style>{`
-        .preloader {
+        .intro {
           position: fixed;
           inset: 0;
-          background: #F8F8F6;
           z-index: 9999;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          animation: fadeOut ${FADE_MS}ms ease ${HOLD_MS}ms forwards;
+          background: #0d0d0d;
+          color: #fff;
+          display: grid;
+          place-items: center;
         }
-
-        .preloader__content {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 1.75rem;
-          padding: 1.5rem;
+        .intro--out {
+          animation: introOut ${FADE_MS}ms ease forwards;
         }
-
-        .preloader__spinner {
-          position: relative;
-          width: 200px;
-          height: 200px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .preloader__icon {
-          position: relative;
-          z-index: 2;
-          width: auto;
-          height: 58px;
-          object-fit: contain;
-          object-position: center;
-          background: transparent;
-        }
-
-        .preloader__svg {
+        .intro__frame,
+        .intro__lockup {
           position: absolute;
           inset: 0;
-          animation: rotate 10s linear infinite;
+          display: grid;
+          place-items: end center;
+          animation: introIn 0.55s ease both;
         }
-
-        .preloader__text {
-          fill: var(--color-accent);
-          font-family: var(--font-display);
-          font-size: 7px;
-          font-weight: 400;
-          letter-spacing: 1.1px;
+        .intro__lockup {
+          place-items: center;
+          gap: 1.1rem;
+          align-content: center;
+        }
+        .intro__photo {
+          position: fixed;
+          inset: 0;
+          width: 100vw;
+          height: 100vh;
+          object-fit: cover;
+          object-position: center 12%;
+        }
+        .intro__frame::after {
+          content: "";
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(180deg, rgba(13,13,13,0.18) 0%, rgba(13,13,13,0.08) 40%, rgba(13,13,13,0.78) 100%);
+        }
+        .intro__caption {
+          position: relative;
+          z-index: 1;
+          text-align: center;
+          padding: 0 1.5rem 11vh;
+          margin: 0;
+        }
+        .intro__kicker {
+          margin: 0 0 0.7rem;
+          color: #E7B84B;
+          font-size: 0.72rem;
+          letter-spacing: 0.28em;
           text-transform: uppercase;
         }
-
-        .preloader__text--flash {
-          font-size: 6.5px;
-          letter-spacing: 1.6px;
-        }
-
-        .preloader__footer {
+        .intro__title,
+        .intro__word {
           margin: 0;
           font-family: var(--font-display);
-          letter-spacing: 0.14em;
-          font-size: clamp(0.85rem, 2.6vw, 1.05rem);
-          color: var(--color-text);
-          text-align: center;
+          font-weight: 400;
+          letter-spacing: -0.02em;
           text-transform: uppercase;
+          line-height: 0.95;
         }
-
-        @keyframes rotate {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
+        .intro__title {
+          font-size: clamp(2.2rem, 7vw, 5.4rem);
         }
-
-        @keyframes fadeOut {
+        .intro__word {
+          font-size: clamp(3rem, 10vw, 7rem);
+        }
+        .intro__rule {
+          display: block;
+          width: 3.25rem;
+          height: 2px;
+          margin: 1rem auto 0.85rem;
+          background: #E7B84B;
+        }
+        .intro__lockup .intro__rule {
+          margin: 0.2rem auto;
+        }
+        .intro__count {
+          margin: 0;
+          color: rgba(255,255,255,0.72);
+          font-size: 0.75rem;
+          letter-spacing: 0.22em;
+        }
+        .intro__logo {
+          width: auto;
+          height: 92px;
+          object-fit: contain;
+        }
+        @keyframes introIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes introOut {
           to { opacity: 0; visibility: hidden; }
         }
       `}</style>

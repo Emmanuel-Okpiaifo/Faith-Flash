@@ -42,7 +42,7 @@ export function SiteFooter() {
         <div className="site-footer__grid">
           <div>
             <img src={LOGO} alt="" className="site-footer__logo" width={160} height={48} />
-            <p className="site-footer__blurb">{site.tagline}</p>
+            <p className="site-footer__blurb">{site.desk}</p>
           </div>
           <div>
             <h2 className="site-footer__title">Faith Flash</h2>
@@ -90,6 +90,7 @@ export function SiteFooter() {
         </div>
         <div className="site-footer__bar">
           <span>© {year} {site.church}</span>
+          <span>{site.churchWord}</span>
           <span>{site.serviceTimes}</span>
         </div>
       </div>

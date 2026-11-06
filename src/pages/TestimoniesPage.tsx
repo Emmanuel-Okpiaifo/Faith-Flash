@@ -1,5 +1,6 @@
 import { site } from '../content/site'
 import { PageHero } from '../components/PageHero'
+import { Seo } from '../components/Seo'
 import { TestimonyBubble } from '../components/TestimonyBubble'
 
 export function TestimoniesPage() {
@@ -7,6 +8,12 @@ export function TestimoniesPage() {
 
   return (
     <>
+      <Seo
+        title="Fire Encounters | Testimonies | Faith Flash | RCCG The Envoys"
+        description="Fire Encounters gathers testimonies from RCCG The Envoys, Ikeja. Read how God is moving in the house, and share your own testimony with Faith Flash."
+        path="/testimonies"
+        keywords="RCCG The Envoys testimonies, Fire Encounters, Faith Flash testimonies, Night of Mercy testimony, Ikeja church testimonies"
+      />
       <PageHero
         eyebrow="The Fire Wall"
         title="Fire Encounters"

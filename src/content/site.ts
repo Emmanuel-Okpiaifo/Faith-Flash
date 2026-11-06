@@ -1,15 +1,25 @@
 /**
  * Central copy and media IDs — synchronized with rccgtheenvoys.org.
+ * Placeholder episode and podcast titles below are unpublished. Do not render them.
  */
-import heroImageAsset from '../assets/img/hero/WhatsApp Image 2026-05-03 at 6.34.06 PM.jpeg'
+const imageKit = 'https://ik.imagekit.io/emmzy26'
+
+function housePhoto(file: string) {
+  return `${imageKit}/tr:w-1800,h-1012,fo-top,c-maintain_ratio/${encodeURI(file)}`
+}
+
+export const siteOrigin = 'https://faith-flash.netlify.app'
 
 export const site = {
   church: 'RCCG The Envoys',
   department: 'Faith Flash',
+  desk: 'Faith Flash is the announcements and testimony desk of RCCG The Envoys, Ikeja.',
+  churchWord: 'We Are Sent To Nations',
   tagline: 'WE ARE THE SENT ONES — RAISING A SUPERNATURAL ARMY DEPLOYED INTO EVERY SPHERE.',
   vision:
     'We are the heart that embraces all with love: the voice that speaks change into people with hope, comfort, and peace. Showcasing radical faith through our conviction.',
-  heroImage: heroImageAsset,
+  shareImage: housePhoto('IMG-20260906-WA0123.jpg'),
+  logo: 'https://www.rccgtheenvoys.org/images/envoys1.png',
   youtube: {
     channelUrl: 'https://www.youtube.com/@RCCGTheEnvoys',
     liveEmbedVideoId: 'live', // Use 'live' to target the current live stream
@@ -122,7 +132,7 @@ export const site = {
     { label: 'Share Your Testimony', href: 'https://bit.ly/Rccgenvoystestimonies', external: true },
   ],
   contact: {
-    address: '6a cocoa industries road, ikeja, lagos',
+    address: 'The Envoys Centre, 6a Cocoa Industries Road, Ogba Industrial Estate, Ikeja, Lagos',
     email: 'hello@envoys.center',
     phone: '+2349062134890',
     phoneHref: 'tel:+2349062134890',
@@ -150,6 +160,42 @@ export const site = {
     lastName: '',
     email: '',
   },
+  intro: [
+    {
+      image: housePhoto('IMG-20260906-WA0123.jpg'),
+      caption: 'THE NEWS OF THE HOUSE',
+    },
+    {
+      image: housePhoto('IMG-20261004-WA0117.jpg'),
+      caption: 'VOICES HE HAS LIFTED',
+    },
+    {
+      image: housePhoto('IMG-20260816-WA0035.jpg'),
+      caption: 'SENT BEYOND THESE WALLS',
+    },
+  ],
+  heroSlides: [
+    {
+      image: housePhoto('IMG-20260906-WA0123.jpg'),
+      label: 'Envoys News · The house gathered',
+    },
+    {
+      image: housePhoto('IMG-20261004-WA0117.jpg'),
+      label: 'Testimony · A witness at the pulpit',
+    },
+    {
+      image: housePhoto('IMG-20261017-WA0025(1).jpg'),
+      label: 'Mercy Convention · Day Three',
+    },
+    {
+      image: housePhoto('IMG-20261004-WA0121.jpg'),
+      label: 'Celebration · Stories shared in the house',
+    },
+    {
+      image: housePhoto('IMG-20260816-WA0035.jpg'),
+      label: 'Outreach · Compassion beyond these walls',
+    },
+  ],
   programs: [
     {
       id: 'sunday-service',

@@ -2,12 +2,19 @@ import { Link } from 'react-router-dom'
 import { site } from '../content/site'
 import { appHref } from '../lib/appHref'
 import { PageHero } from '../components/PageHero'
+import { Seo } from '../components/Seo'
 
 export function MagazinesPage() {
   const magazines = site.magazines
 
   return (
     <>
+      <Seo
+        title="Magazines | Faith Flash | RCCG The Envoys"
+        description="Read Faith Flash magazines from RCCG The Envoys, including the Mercy Convention 2026 recap Unending Open Doors. Open each issue as a flipbook in your browser."
+        path="/magazines"
+        keywords="Faith Flash magazine, Unending Open Doors, Mercy Convention 2026 magazine, RCCG The Envoys recap, church magazine Ikeja"
+      />
       <PageHero
         eyebrow="The Reading Room"
         title="Faith Flash Magazines"
