@@ -127,7 +127,7 @@ export function scheduleMagazineWarmup(mode: 'background' | 'shelf' | 'reader'):
 
   const arm = () => {
     if (dead) return
-    if ('requestIdleCallback' in window) {
+    if (typeof window.requestIdleCallback === 'function') {
       idle = window.requestIdleCallback(kick, { timeout: 2500 })
     } else {
       timer = window.setTimeout(kick, 1000)
