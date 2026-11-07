@@ -2006,14 +2006,25 @@ h1, h2, h3 {
   .hero__card-title { font-size: 1.35rem; }
   .hero__card-meta { font-size: 0.75rem; word-break: break-word; }
   .team-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
   }
   .team-card__media {
-    aspect-ratio: 1 / 1.1;
+    aspect-ratio: 4 / 5;
+  }
+  .team-card__content {
+    padding: 0.7rem 0.55rem 0.65rem;
   }
   .team-card__name {
-    font-size: 1.45rem;
+    font-size: 0.95rem;
+    margin-bottom: 0.3rem;
+  }
+  .team-card__role {
+    font-size: 0.5rem;
+    letter-spacing: 0.06em;
+    padding: 0.28rem 0.4rem;
+    white-space: normal;
+    text-align: left;
   }
   .testimony-modal {
     max-height: min(92vh, calc(100dvh - 140px - 2rem));

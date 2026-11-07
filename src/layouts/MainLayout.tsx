@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import { SiteFooter } from '../components/SiteFooter'
 import { SiteHeader } from '../components/SiteHeader'
 import { Preloader } from '../components/Preloader'
+import { scheduleMagazineWarmup } from '../lib/warmMagazine'
 
 export function MainLayout() {
   const [scrolled, setScrolled] = useState(false)
@@ -16,6 +17,15 @@ export function MainLayout() {
       return
     }
     window.scrollTo(0, 0)
+  }, [pathname])
+
+  useEffect(() => {
+    const mode = pathname.startsWith('/magazines/')
+      ? 'reader'
+      : pathname === '/magazines'
+        ? 'shelf'
+        : 'background'
+    return scheduleMagazineWarmup(mode)
   }, [pathname])
 
   useEffect(() => {

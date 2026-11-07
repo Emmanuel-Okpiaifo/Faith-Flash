@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { appHref } from '../lib/appHref'
+import { ensureDflipLoaded } from '../lib/dflipRuntime'
+import { takeMagazineSource } from '../lib/warmMagazine'
 
 /**
  * Embeds the DearFlip Lite (v1.7, CC BY-NC-ND 4.0) flipbook viewer around a
@@ -10,69 +12,6 @@ import { appHref } from '../lib/appHref'
 
 type DflipWindow = Window & {
   jQuery?: unknown
-  DFLIP?: {
-    defaults?: Record<string, unknown>
-    parseBooks?: () => void
-  }
-  __dflipLoader__?: Promise<void>
-}
-
-function assetHref(path: string): string {
-  return appHref(path)
-}
-
-function loadStylesheet(href: string): void {
-  const marker = `link[data-dflip-asset="${href}"]`
-  if (document.head.querySelector(marker)) return
-  const link = document.createElement('link')
-  link.rel = 'stylesheet'
-  link.href = href
-  link.dataset.dflipAsset = href
-  document.head.appendChild(link)
-}
-
-function loadScript(src: string): Promise<void> {
-  const selector = `script[data-dflip-asset="${src}"]`
-  const existing = document.head.querySelector<HTMLScriptElement>(selector)
-  if (existing) {
-    if (existing.dataset.loaded === 'true') return Promise.resolve()
-    return new Promise((resolve, reject) => {
-      existing.addEventListener('load', () => resolve(), { once: true })
-      existing.addEventListener('error', () => reject(new Error(`Failed to load ${src}`)), {
-        once: true,
-      })
-    })
-  }
-  return new Promise((resolve, reject) => {
-    const s = document.createElement('script')
-    s.src = src
-    s.async = false
-    s.dataset.dflipAsset = src
-    s.addEventListener(
-      'load',
-      () => {
-        s.dataset.loaded = 'true'
-        resolve()
-      },
-      { once: true }
-    )
-    s.addEventListener('error', () => reject(new Error(`Failed to load ${src}`)), { once: true })
-    document.head.appendChild(s)
-  })
-}
-
-function ensureDflipLoaded(): Promise<void> {
-  const w = window as DflipWindow
-  if (w.__dflipLoader__) return w.__dflipLoader__
-
-  w.__dflipLoader__ = (async () => {
-    loadStylesheet(assetHref('/dflip/css/dflip.min.css'))
-    loadStylesheet(assetHref('/dflip/css/themify-icons.min.css'))
-    await loadScript(assetHref('/dflip/js/libs/jquery.min.js'))
-    await loadScript(assetHref('/dflip/js/dflip.min.js'))
-  })()
-
-  return w.__dflipLoader__
 }
 
 interface FlipBook {
@@ -84,6 +23,7 @@ interface FlipBook {
 interface DearFlipViewerProps {
   pdfUrl: string
   title: string
+  poster?: string
 }
 
 function pageModeFor(width: number) {
@@ -97,7 +37,7 @@ function viewerHeight(width: number) {
   return Math.round(Math.min(fromWidth, fromScreen))
 }
 
-export function DearFlipViewer({ pdfUrl, title }: DearFlipViewerProps) {
+export function DearFlipViewer({ pdfUrl, title, poster }: DearFlipViewerProps) {
   const stageRef = useRef<HTMLDivElement>(null)
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
   const [errorMsg, setErrorMsg] = useState<string>('')
@@ -106,10 +46,11 @@ export function DearFlipViewer({ pdfUrl, title }: DearFlipViewerProps) {
     let cancelled = false
     const stage = stageRef.current
     if (!stage) return
+    const sourceTask = takeMagazineSource(pdfUrl)
 
     ;(async () => {
       try {
-        await ensureDflipLoaded()
+        const [source] = await Promise.all([sourceTask.promise, ensureDflipLoaded()])
         if (cancelled || !stage) return
 
         stage.innerHTML = ''
@@ -143,6 +84,21 @@ export function DearFlipViewer({ pdfUrl, title }: DearFlipViewerProps) {
           paddingLeft: 0,
           paddingRight: 0,
           forceFit: true,
+          onReady: () => {
+            if (!cancelled) setStatus('ready')
+          },
+          ...(source.kind === 'file'
+            ? {
+                docParameters: {
+                  data: source.data,
+                  cMapUrl: appHref('/dflip/js/libs/cmaps/'),
+                  cMapPacked: true,
+                  imageResourcesPath: appHref('/dflip/images/pdfjs/'),
+                  disableAutoFetch: true,
+                  disableStream: true,
+                },
+              }
+            : {}),
         })
 
         let mode = pageModeFor(width)
@@ -164,11 +120,14 @@ export function DearFlipViewer({ pdfUrl, title }: DearFlipViewerProps) {
         observer.observe(stage)
         window.addEventListener('resize', onResize)
         const settle = window.setTimeout(fit, 400)
+        const reveal = window.setTimeout(() => {
+          if (!cancelled) setStatus('ready')
+        }, 20000)
 
-        setStatus('ready')
         const stop = () => {
           window.clearTimeout(resizeTimer)
           window.clearTimeout(settle)
+          window.clearTimeout(reveal)
           observer.disconnect()
           window.removeEventListener('resize', onResize)
         }
@@ -176,6 +135,7 @@ export function DearFlipViewer({ pdfUrl, title }: DearFlipViewerProps) {
         ;(stage as HTMLDivElement & { __dflipStop?: () => void }).__dflipStop = stop
       } catch (err) {
         if (cancelled) return
+        if (err instanceof DOMException && err.name === 'AbortError') return
         setErrorMsg(err instanceof Error ? err.message : 'Unable to load flipbook')
         setStatus('error')
       }
@@ -183,6 +143,7 @@ export function DearFlipViewer({ pdfUrl, title }: DearFlipViewerProps) {
 
     return () => {
       cancelled = true
+      sourceTask.cancel()
       const node = stage as HTMLDivElement & { __dflipStop?: () => void }
       node.__dflipStop?.()
       node.__dflipStop = undefined
@@ -194,8 +155,11 @@ export function DearFlipViewer({ pdfUrl, title }: DearFlipViewerProps) {
     <div className="dearflip" aria-label={`${title} flipbook`}>
       {status === 'loading' && (
         <div className="dearflip__status" role="status">
-          <span className="dearflip__spinner" aria-hidden />
-          Loading flipbook…
+          {poster ? <img src={poster} alt="" className="dearflip__poster" /> : null}
+          <span className="dearflip__status-chip">
+            <span className="dearflip__spinner" aria-hidden />
+            Opening the magazine…
+          </span>
         </div>
       )}
       {status === 'error' && (

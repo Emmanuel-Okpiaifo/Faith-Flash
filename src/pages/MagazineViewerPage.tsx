@@ -108,7 +108,7 @@ export function MagazineViewerPage() {
           </div>
         </div>
         <div className="magazine-viewer__stage-wrap reveal" ref={stageRef}>
-          <DearFlipViewer pdfUrl={pdfUrl} title={magazine.title} />
+          <DearFlipViewer pdfUrl={pdfUrl} title={magazine.title} poster={appHref(magazine.cover)} />
         </div>
       </section>
 
@@ -153,6 +153,7 @@ export function MagazineViewerPage() {
         .dearflip__status {
           position: absolute;
           inset: 0;
+          z-index: 4;
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -160,6 +161,31 @@ export function MagazineViewerPage() {
           gap: 0.75rem;
           color: var(--color-text-muted);
           pointer-events: none;
+          overflow: hidden;
+          background: #f8f8f6;
+        }
+        .dearflip__poster {
+          position: absolute;
+          inset: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          padding: 1.25rem;
+        }
+        .dearflip__status-chip {
+          position: relative;
+          z-index: 1;
+          display: inline-flex;
+          align-items: center;
+          gap: 0.55rem;
+          padding: 0.45rem 0.8rem;
+          border-radius: 999px;
+          background: rgba(248, 248, 246, 0.94);
+          color: #0d0d0d;
+          font-size: 0.72rem;
+          font-weight: 700;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
         }
         .dearflip__status--error {
           pointer-events: auto;
