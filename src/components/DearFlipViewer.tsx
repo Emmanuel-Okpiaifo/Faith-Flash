@@ -8,6 +8,13 @@ import { takeMagazineSource } from '../lib/warmMagazine'
  * same-origin PDF. The plugin's files are served from /public/dflip/ verbatim
  * — no modifications, in line with the Lite license. Scripts are loaded once
  * and cached on the window; subsequent instances reuse them.
+ *
+ * This component is deliberately NOT used on WebKit engines (iOS Safari, iOS
+ * Chrome/Firefox/Edge — all WebKit under the hood — and desktop Safari): on
+ * iOS the Lite build's three.js + pdf.js init cascade reliably crashes the
+ * renderer process for a magazine this size, which shows up as photos
+ * silently failing to decode. The viewer page falls back to PdfFrameViewer
+ * for those browsers.
  */
 
 type DflipWindow = Window & {
