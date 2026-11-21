@@ -1,2 +1,7 @@
+# Magazine PDF proxy — same-origin stand-in for the ImageKit CDN copy so
+# pdf.js on iOS Safari can make Range requests without CORS. Must stay above
+# the SPA catch-all. See netlify.toml for the canonical Netlify config.
+/magazines/files/*  https://ik.imagekit.io/emmzy26/faithflash/magazines/:splat  200
+
 /podcasts  /online-tv/audio  301
 /*    /index.html   200

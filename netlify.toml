@@ -1,0 +1,31 @@
+# Faith Flash — Netlify config.
+#
+# The magazine PDF is hosted on ImageKit for CDN performance, but pdf.js on
+# iOS Safari fails when it has to make cross-origin Range requests against
+# ImageKit (ImageKit's 206 responses don't expose Content-Range / Accept-
+# Ranges via Access-Control-Expose-Headers, and older Safari doesn't honour
+# Access-Control-Allow-Headers: *). Proxied through this site's origin the
+# Range requests are same-origin, so CORS never enters the picture.
+#
+# Order matters: the magazine proxy MUST come before the SPA catch-all, or
+# /* would rewrite /magazines/files/*.pdf to index.html.
+
+[[redirects]]
+  from = "/magazines/files/*"
+  to = "https://ik.imagekit.io/emmzy26/faithflash/magazines/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/podcasts"
+  to = "/online-tv/audio"
+  status = 301
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[build]
+  command = "npm run build"
+  publish = "dist"

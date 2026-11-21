@@ -133,13 +133,15 @@ export const site = {
       dates: '14 to 22 October 2026',
       description:
         'A recap magazine capturing the Mercy Convention 2026 at RCCG The Envoys, Ikeja.',
-      file: 'https://ik.imagekit.io/emmzy26/faithflash/magazines/royal-mercy-unending-open-doors-mercy-convention-2026.pdf',
+      // Same-origin proxy of the ImageKit CDN file (see netlify.toml /
+      // public/_redirects). Serving through this site's origin lets pdf.js
+      // make Range requests on iOS Safari without hitting ImageKit's CORS
+      // expose-headers gap ("cross origin cannot load file").
+      file: '/magazines/files/royal-mercy-unending-open-doors-mercy-convention-2026.pdf',
       cover: '/magazines/unending-open-doors-mercy-convention-2026-cover.jpg',
-      // Per-page JPEG renders (portrait, 1400px long side), used by the
-      // in-browser flipbook so mobile WebKit never has to decode the whole
-      // 13 MB PDF. ImageKit also serves on-the-fly resizes by inserting
-      // `/tr:w-<px>` between `base` and the filename; the viewer picks a
-      // narrower variant on phone viewports.
+      // Per-page JPEG renders (portrait, 1400px long side) hosted on ImageKit.
+      // Kept in content for a future image-based fallback; the live viewer
+      // currently uses the PDF via the same-origin /magazines/files/ proxy.
       pages: {
         base: 'https://ik.imagekit.io/emmzy26/faithflash/magazines/unending-open-doors-pages',
         files: [
