@@ -12,5 +12,28 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     base: base.endsWith('/') || base === '/' ? base : `${base}/`,
+    // Mirror the Netlify /magazines/files/* → ImageKit proxy so local
+    // `vite` / `vite preview` exercise the same same-origin PDF path the
+    // production site uses (needed for pdf.js Range requests on WebKit).
+    server: {
+      proxy: {
+        '/magazines/files': {
+          target: 'https://ik.imagekit.io',
+          changeOrigin: true,
+          rewrite: (path) =>
+            path.replace(/^\/magazines\/files/, '/emmzy26/faithflash/magazines'),
+        },
+      },
+    },
+    preview: {
+      proxy: {
+        '/magazines/files': {
+          target: 'https://ik.imagekit.io',
+          changeOrigin: true,
+          rewrite: (path) =>
+            path.replace(/^\/magazines\/files/, '/emmzy26/faithflash/magazines'),
+        },
+      },
+    },
   }
 })

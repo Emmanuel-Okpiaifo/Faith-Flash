@@ -1,7 +1,6 @@
 import { site } from '../content/site'
 import { appHref } from './appHref'
 import { ensureDflipLoaded } from './dflipRuntime'
-import { isWebkitEngine } from './webkit'
 
 /**
  * Quietly fetches the flipbook runtime and the issue PDF after the page is
@@ -102,10 +101,6 @@ function warmRuntime(): void {
 
 function warmFiles(): void {
   if (filesStarted || !canPrefetch()) return
-  // Skip the whole-PDF prefetch on WebKit (iOS Safari / macOS Safari). The
-  // viewer opens pdf.js in byte-range streaming mode there — holding another
-  // 13 MB copy in a Uint8Array on an iPhone is wasted memory and data.
-  if (isWebkitEngine()) return
   filesStarted = true
   for (const magazine of site.magazines) {
     beginDownload(appHref(magazine.file))
