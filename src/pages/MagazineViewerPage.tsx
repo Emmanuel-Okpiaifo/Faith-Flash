@@ -2,14 +2,9 @@ import { useCallback, useEffect, useRef } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { site } from '../content/site'
 import { appHref } from '../lib/appHref'
-import { isWebkitEngine } from '../lib/webkit'
 import { DearFlipViewer } from '../components/DearFlipViewer'
-import { PdfFrameViewer } from '../components/PdfFrameViewer'
 import { PageHero } from '../components/PageHero'
 import { Seo } from '../components/Seo'
-
-// Fixed for the lifetime of the tab; the UA doesn't change between renders.
-const useNativePdf = typeof window !== 'undefined' && isWebkitEngine()
 
 export function MagazineViewerPage() {
   const { slug } = useParams<{ slug: string }>()
@@ -112,19 +107,8 @@ export function MagazineViewerPage() {
             </a>
           </div>
         </div>
-        <div
-          className={
-            useNativePdf
-              ? 'magazine-viewer__stage-wrap magazine-viewer__stage-wrap--native reveal'
-              : 'magazine-viewer__stage-wrap reveal'
-          }
-          ref={stageRef}
-        >
-          {useNativePdf ? (
-            <PdfFrameViewer pdfUrl={pdfUrl} title={magazine.title} />
-          ) : (
-            <DearFlipViewer pdfUrl={pdfUrl} title={magazine.title} poster={appHref(magazine.cover)} />
-          )}
+        <div className="magazine-viewer__stage-wrap reveal" ref={stageRef}>
+          <DearFlipViewer pdfUrl={pdfUrl} title={magazine.title} poster={appHref(magazine.cover)} />
         </div>
       </section>
 
@@ -154,29 +138,6 @@ export function MagazineViewerPage() {
           border: 1px solid var(--color-line);
           border-radius: var(--radius-lg);
           padding: 0.35rem 0.35rem 0.5rem;
-        }
-        .magazine-viewer__stage-wrap--native {
-          padding: 0;
-          overflow: hidden;
-        }
-        .pdf-frame {
-          display: flex;
-          flex-direction: column;
-          width: 100%;
-        }
-        .pdf-frame__iframe {
-          display: block;
-          width: 100%;
-          height: min(86vh, 1080px);
-          min-height: 520px;
-          border: 0;
-          background: #f8f8f6;
-        }
-        .pdf-frame__hint {
-          margin: 0.6rem 1rem 0.9rem;
-          font-size: 0.8rem;
-          color: var(--color-text-muted);
-          text-align: center;
         }
         .dearflip,
         .dearflip__stage {
@@ -255,6 +216,7 @@ export function MagazineViewerPage() {
             min-height: 78vh;
           }
         }
+
       `}</style>
     </>
   )

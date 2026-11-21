@@ -2,19 +2,27 @@ import { useEffect, useRef, useState } from 'react'
 import { appHref } from '../lib/appHref'
 import { ensureDflipLoaded } from '../lib/dflipRuntime'
 import { takeMagazineSource } from '../lib/warmMagazine'
+import { isWebkitEngine } from '../lib/webkit'
 
 /**
- * Embeds the DearFlip Lite (v1.7, CC BY-NC-ND 4.0) flipbook viewer around a
- * same-origin PDF. The plugin's files are served from /public/dflip/ verbatim
- * — no modifications, in line with the Lite license. Scripts are loaded once
- * and cached on the window; subsequent instances reuse them.
+ * Embeds the DearFlip Lite (v1.7, CC BY-NC-ND 4.0) flipbook viewer around the
+ * magazine PDF. The plugin's files are served from /public/dflip/ verbatim
+ * (no modifications, per the Lite license). Scripts are loaded once and
+ * cached on the window; subsequent opens reuse them.
  *
- * This component is deliberately NOT used on WebKit engines (iOS Safari, iOS
- * Chrome/Firefox/Edge — all WebKit under the hood — and desktop Safari): on
- * iOS the Lite build's three.js + pdf.js init cascade reliably crashes the
- * renderer process for a magazine this size, which shows up as photos
- * silently failing to decode. The viewer page falls back to PdfFrameViewer
- * for those browsers.
+ * iOS Safari hardening: when the user agent is WebKit we switch the viewer
+ * into a mode that is safe on iOS devices with tight per-tab memory and
+ * per-canvas pixel limits. iOS caps a single canvas backing store at roughly
+ * 4096×4096 pixels regardless of device memory (and roughly ~5 MP on older
+ * devices); pdf.js's default `maxCanvasPixels` is 16777216 (~4096²), which
+ * straddles that limit. Our 52-page magazine has 200 DPI JPEG photos that
+ * easily push rendered pages past the iOS canvas ceiling, so photos come
+ * back blank on real iPhones while page geometry still draws. Capping
+ * maxCanvasPixels, dropping to a single-page spread, and turning off the
+ * WebGL 3D flip + three.js runtime on iOS keeps rendering inside the device
+ * budget and lets every photo paint.
+ *
+ * Desktop and Android stay on the full 3D flipbook.
  */
 
 type DflipWindow = Window & {
@@ -33,7 +41,8 @@ interface DearFlipViewerProps {
   poster?: string
 }
 
-function pageModeFor(width: number) {
+function pageModeFor(width: number, forceSingle: boolean) {
+  if (forceSingle) return 1
   return width < 960 ? 1 : 2
 }
 
@@ -43,6 +52,14 @@ function viewerHeight(width: number) {
   const fromScreen = Math.max(480, window.innerHeight * 0.82)
   return Math.round(Math.min(fromWidth, fromScreen))
 }
+
+// iOS Safari silently fails to back a canvas larger than roughly 4096×4096
+// on recent iPhones, and closer to ~5 MP on older devices. pdf.js's default
+// maxCanvasPixels is 16777216 (~4096²) — right at that ceiling, so page
+// renders that happen to be one pixel over end up with blank photo regions.
+// Cap below the limit so pdf.js downsamples the offending pages instead.
+// This is the value the pdf.js community has long recommended for iOS.
+const IOS_MAX_CANVAS_PIXELS = 5_242_880
 
 export function DearFlipViewer({ pdfUrl, title, poster }: DearFlipViewerProps) {
   const stageRef = useRef<HTMLDivElement>(null)
@@ -60,13 +77,19 @@ export function DearFlipViewer({ pdfUrl, title, poster }: DearFlipViewerProps) {
         const [source] = await Promise.all([sourceTask.promise, ensureDflipLoaded()])
         if (cancelled || !stage) return
 
+        const webkit = isWebkitEngine()
         stage.innerHTML = ''
         const book = document.createElement('div')
         const width = stage.clientWidth || window.innerWidth
         book.className = '_df_book'
         book.setAttribute('source', pdfUrl)
         book.setAttribute('id', `dflip_${Math.random().toString(36).slice(2, 10)}`)
-        book.setAttribute('webgl', 'true')
+        // On iOS/macOS Safari, drop WebGL, drop the hard-cover 3D geometry,
+        // and force single-page so pdf.js only has one page rasterised at a
+        // time. This keeps total GPU + canvas backing-store memory inside
+        // the per-tab budget and makes photo decoding reliable.
+        book.setAttribute('webgl', webkit ? 'false' : 'true')
+        if (webkit) book.setAttribute('hard', 'none')
         book.setAttribute('backgroundcolor', '#F8F8F6')
         book.setAttribute('autoEnableOutline', 'false')
         book.setAttribute('autoEnableThumbnail', 'false')
@@ -78,13 +101,25 @@ export function DearFlipViewer({ pdfUrl, title, poster }: DearFlipViewerProps) {
         if (typeof w.jQuery !== 'function') {
           throw new Error('DearFlip runtime unavailable')
         }
+        const docExtra = webkit
+          ? {
+              cMapUrl: appHref('/dflip/js/libs/cmaps/'),
+              cMapPacked: true,
+              imageResourcesPath: appHref('/dflip/images/pdfjs/'),
+              maxImageSize: 8 * 1024 * 1024,
+              disableFontFace: false,
+              useSystemFonts: true,
+            }
+          : {}
         const flip = w.jQuery(book).flipBook(pdfUrl, {
           height: viewerHeight(width),
-          webgl: true,
+          webgl: !webkit,
+          hard: webkit ? 'none' : 'all',
+          maxCanvasPixels: webkit ? IOS_MAX_CANVAS_PIXELS : undefined,
           backgroundColor: '#F8F8F6',
           autoEnableOutline: false,
           autoEnableThumbnail: false,
-          pageMode: pageModeFor(width),
+          pageMode: pageModeFor(width, webkit),
           singlePageMode: 1,
           paddingTop: 8,
           paddingBottom: 8,
@@ -94,7 +129,7 @@ export function DearFlipViewer({ pdfUrl, title, poster }: DearFlipViewerProps) {
           onReady: () => {
             if (!cancelled) setStatus('ready')
           },
-          ...(source.kind === 'file'
+          ...(source.kind === 'file' && !webkit
             ? {
                 docParameters: {
                   data: source.data,
@@ -103,16 +138,24 @@ export function DearFlipViewer({ pdfUrl, title, poster }: DearFlipViewerProps) {
                   imageResourcesPath: appHref('/dflip/images/pdfjs/'),
                   disableAutoFetch: true,
                   disableStream: true,
+                  ...docExtra,
                 },
               }
-            : {}),
+            : webkit
+              ? {
+                  // On iOS keep pdf.js in byte-range streaming mode so it
+                  // never holds the whole 13 MB file in a Uint8Array at the
+                  // same time as decoded page canvases.
+                  docParameters: { ...docExtra },
+                }
+              : {}),
         })
 
-        let mode = pageModeFor(width)
+        let mode = pageModeFor(width, webkit)
         let resizeTimer = 0
         const fit = () => {
           const nextWidth = stage.clientWidth || window.innerWidth
-          const nextMode = pageModeFor(nextWidth)
+          const nextMode = pageModeFor(nextWidth, webkit)
           if (nextMode !== mode) {
             flip.setPageMode?.(nextMode === 1)
             mode = nextMode

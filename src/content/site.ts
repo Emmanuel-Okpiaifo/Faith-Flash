@@ -135,6 +135,24 @@ export const site = {
         'A recap magazine capturing the Mercy Convention 2026 at RCCG The Envoys, Ikeja.',
       file: 'https://ik.imagekit.io/emmzy26/faithflash/magazines/royal-mercy-unending-open-doors-mercy-convention-2026.pdf',
       cover: '/magazines/unending-open-doors-mercy-convention-2026-cover.jpg',
+      // Per-page JPEG renders (portrait, 1400px long side), used by the
+      // in-browser flipbook so mobile WebKit never has to decode the whole
+      // 13 MB PDF. ImageKit also serves on-the-fly resizes by inserting
+      // `/tr:w-<px>` between `base` and the filename; the viewer picks a
+      // narrower variant on phone viewports.
+      pages: {
+        base: 'https://ik.imagekit.io/emmzy26/faithflash/magazines/unending-open-doors-pages',
+        files: [
+          'p-01.jpg', 'p-02.jpg', 'p-03.jpg', 'p-04.jpg', 'p-05.jpg', 'p-06.jpg', 'p-07.jpg',
+          'p-08.jpg', 'p-09.jpg', 'p-10.jpg', 'p-11.jpg', 'p-12.jpg', 'p-13.jpg', 'p-14.jpg',
+          'p-15.jpg', 'p-16.jpg', 'p-17.jpg', 'p-18.jpg', 'p-19.jpg', 'p-20.jpg', 'p-21.jpg',
+          'p-22.jpg', 'p-23.jpg', 'p-24.jpg', 'p-25.jpg', 'p-26.jpg', 'p-27.jpg', 'p-28.jpg',
+          'p-29.jpg', 'p-30.jpg', 'p-31.jpg', 'p-32.jpg', 'p-33.jpg', 'p-34.jpg', 'p-35.jpg',
+          'p-36.jpg', 'p-37.jpg', 'p-38.jpg', 'p-39.jpg', 'p-40.jpg', 'p-41.jpg', 'p-42.jpg',
+          'p-43.jpg', 'p-44.jpg', 'p-45.jpg', 'p-46.jpg', 'p-47.jpg', 'p-48.jpg', 'p-49.jpg',
+          'p-50.jpg', 'p-51.jpg', 'p-52.jpg',
+        ],
+      },
     },
   ],
   quickLinks: [
