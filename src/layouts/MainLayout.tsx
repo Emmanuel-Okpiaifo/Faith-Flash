@@ -4,7 +4,6 @@ import { SiteFooter } from '../components/SiteFooter'
 import { SiteHeader } from '../components/SiteHeader'
 import { Preloader } from '../components/Preloader'
 import { scheduleMagazineWarmup } from '../lib/warmMagazine'
-import { isWebkitEngine } from '../lib/webkit'
 
 export function MainLayout() {
   const [scrolled, setScrolled] = useState(false)
@@ -21,11 +20,6 @@ export function MainLayout() {
   }, [pathname])
 
   useEffect(() => {
-    // DearFlip crashes WebKit on this PDF, so WebKit uses the browser's
-    // native in-frame PDF viewer (see MagazineViewerPage). Don't prefetch
-    // dflip runtime or the issue PDF for a flipbook that's never going to
-    // open there — it's wasted bandwidth on mobile data.
-    if (isWebkitEngine()) return
     const mode = pathname.startsWith('/magazines/')
       ? 'reader'
       : pathname === '/magazines'
