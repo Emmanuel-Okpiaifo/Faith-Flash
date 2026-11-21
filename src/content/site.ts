@@ -133,7 +133,7 @@ export const site = {
       dates: '14 to 22 October 2026',
       description:
         'A recap magazine capturing the Mercy Convention 2026 at RCCG The Envoys, Ikeja.',
-      file: '/magazines/unending-open-doors-mercy-convention-2026.pdf',
+      file: 'https://ik.imagekit.io/emmzy26/faithflash/magazines/royal-mercy-unending-open-doors-mercy-convention-2026.pdf',
       cover: '/magazines/unending-open-doors-mercy-convention-2026-cover.jpg',
     },
   ],
