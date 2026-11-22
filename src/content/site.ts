@@ -148,9 +148,10 @@ export const site = {
       // the same ImageKit path — bump MAGAZINE_PDF_VERSION above.
       file: `/magazines/files/royal-mercy-unending-open-doors-mercy-convention-2026.pdf?v=${MAGAZINE_PDF_VERSION}`,
       cover: '/magazines/unending-open-doors-mercy-convention-2026-cover.jpg',
-      // Per-page JPEG renders (portrait, 1400px long side) hosted on ImageKit.
-      // Kept in content for a future image-based fallback; the live viewer
-      // currently uses the PDF via the same-origin /magazines/files/ proxy.
+      // Per-page JPEG renders (portrait, about 1400px on the long side).
+      // iPhone and iPad read these instead of the PDF. pdf.js 4.10 on WebKit
+      // drops the photographs, and ImageKit does not expose Content-Range on
+      // cross-origin range responses.
       pages: {
         base: 'https://ik.imagekit.io/emmzy26/faithflash/magazines/unending-open-doors-pages',
         files: [
@@ -162,6 +163,20 @@ export const site = {
           'p-36.jpg', 'p-37.jpg', 'p-38.jpg', 'p-39.jpg', 'p-40.jpg', 'p-41.jpg', 'p-42.jpg',
           'p-43.jpg', 'p-44.jpg', 'p-45.jpg', 'p-46.jpg', 'p-47.jpg', 'p-48.jpg', 'p-49.jpg',
           'p-50.jpg', 'p-51.jpg', 'p-52.jpg',
+        ],
+        // PDF pages 53–62 were not in the ImageKit set. They are the same
+        // 1400px renders, served from this site so iOS still reaches Night Nine.
+        local: [
+          '/magazines/unending-open-doors-pages/p-53.jpg',
+          '/magazines/unending-open-doors-pages/p-54.jpg',
+          '/magazines/unending-open-doors-pages/p-55.jpg',
+          '/magazines/unending-open-doors-pages/p-56.jpg',
+          '/magazines/unending-open-doors-pages/p-57.jpg',
+          '/magazines/unending-open-doors-pages/p-58.jpg',
+          '/magazines/unending-open-doors-pages/p-59.jpg',
+          '/magazines/unending-open-doors-pages/p-60.jpg',
+          '/magazines/unending-open-doors-pages/p-61.jpg',
+          '/magazines/unending-open-doors-pages/p-62.jpg',
         ],
       },
     },

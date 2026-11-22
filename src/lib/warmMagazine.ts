@@ -1,6 +1,7 @@
 import { site } from '../content/site'
 import { appHref } from './appHref'
 import { ensureDflipLoaded } from './dflipRuntime'
+import { isIosDevice } from './webkit'
 
 /**
  * Quietly fetches the flipbook runtime and the issue PDF after the page is
@@ -99,9 +100,27 @@ function warmRuntime(): void {
   }
 }
 
+function warmIosPages(): void {
+  for (const magazine of site.magazines) {
+    const pages = magazine.pages
+    if (!pages) continue
+    for (const file of pages.files.slice(0, 2)) {
+      const img = new Image()
+      img.decoding = 'async'
+      img.src = `${pages.base}/${file}`
+    }
+  }
+}
+
 function warmFiles(): void {
   if (filesStarted || !canPrefetch()) return
   filesStarted = true
+  // The iOS reader never opens the PDF. Pulling the 15 MB file into memory
+  // there is what was getting the tab killed before the first page painted.
+  if (isIosDevice()) {
+    warmIosPages()
+    return
+  }
   for (const magazine of site.magazines) {
     beginDownload(appHref(magazine.file))
   }

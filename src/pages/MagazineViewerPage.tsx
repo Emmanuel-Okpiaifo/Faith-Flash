@@ -9,27 +9,14 @@ import { Seo } from '../components/Seo'
 export function MagazineViewerPage() {
   const { slug } = useParams<{ slug: string }>()
   const magazine = site.magazines.find((m) => m.slug === slug)
-
-  if (!magazine) {
-    return (
-      <>
-        <PageHero
-          eyebrow="The Reading Room"
-          title="Magazine not found"
-          lede="We couldn’t find that issue. Head back to the magazine shelf to pick another."
-        />
-        <section className="band">
-          <div className="container" style={{ textAlign: 'center' }}>
-            <Link to="/magazines" className="btn btn--accent" style={{ textDecoration: 'none' }}>
-              Back to magazines
-            </Link>
-          </div>
-        </section>
-      </>
-    )
-  }
-
-  const pdfUrl = appHref(magazine.file)
+  const pdfUrl = magazine ? appHref(magazine.file) : ''
+  const sheet = magazine?.pages
+  const pageImages = sheet
+    ? [
+        ...sheet.files.map((file) => `${sheet.base}/${file}`),
+        ...sheet.local.map((file) => appHref(file)),
+      ]
+    : undefined
   const stageRef = useRef<HTMLDivElement>(null)
   const scrollToMagazine = useCallback((): (() => void) => {
     const stage = stageRef.current
@@ -60,6 +47,7 @@ export function MagazineViewerPage() {
   }, [])
 
   useEffect(() => {
+    if (!magazine) return
     let cancel = () => {}
     let timer = 0
     let dead = false
@@ -80,7 +68,26 @@ export function MagazineViewerPage() {
       window.removeEventListener('load', start)
       cancel()
     }
-  }, [scrollToMagazine])
+  }, [magazine, scrollToMagazine])
+
+  if (!magazine) {
+    return (
+      <>
+        <PageHero
+          eyebrow="The Reading Room"
+          title="Magazine not found"
+          lede="We couldn’t find that issue. Head back to the magazine shelf to pick another."
+        />
+        <section className="band">
+          <div className="container" style={{ textAlign: 'center' }}>
+            <Link to="/magazines" className="btn btn--accent" style={{ textDecoration: 'none' }}>
+              Back to magazines
+            </Link>
+          </div>
+        </section>
+      </>
+    )
+  }
 
   return (
     <>
@@ -108,7 +115,12 @@ export function MagazineViewerPage() {
           </div>
         </div>
         <div className="magazine-viewer__stage-wrap reveal" ref={stageRef}>
-          <DearFlipViewer pdfUrl={pdfUrl} title={magazine.title} poster={appHref(magazine.cover)} />
+          <DearFlipViewer
+            pdfUrl={pdfUrl}
+            title={magazine.title}
+            poster={appHref(magazine.cover)}
+            pages={pageImages}
+          />
         </div>
       </section>
 
