@@ -17,11 +17,18 @@ type DflipDefaults = {
   soundFile?: string
 }
 
+type TextureLoader = {
+  setCrossOrigin?: (value: string) => unknown
+}
+
 type DflipWindow = Window & {
   jQuery?: JQueryStatic
   dFlipLocation?: string
+  THREE?: unknown
+  MOCKUP?: { textureLoader?: TextureLoader }
   DFLIP?: { autoDetectLocation?: number; defaults?: DflipDefaults }
   __dflipLoader__?: Promise<void>
+  __dflipWebgl__?: Promise<void>
 }
 
 function assetUrl(relativePath: string): string {
@@ -118,4 +125,25 @@ export function ensureDflipLoaded(): Promise<void> {
   })()
 
   return w.__dflipLoader__
+}
+
+/**
+ * Loads the 3D page-turn runtime and allows ImageKit page photos to become
+ * WebGL textures. Without the anonymous CORS flag those photos stay blank.
+ */
+export function ensureFlipWebgl(): Promise<void> {
+  const w = window as DflipWindow
+  if (w.__dflipWebgl__) return w.__dflipWebgl__
+
+  w.__dflipWebgl__ = (async () => {
+    await ensureDflipLoaded()
+    if (!w.THREE) await loadScript(assetUrl('/dflip/js/libs/three.min.js'))
+    if (!w.MOCKUP) await loadScript(assetUrl('/dflip/js/libs/mockup.min.js'))
+    w.MOCKUP?.textureLoader?.setCrossOrigin?.('anonymous')
+  })().catch((error: unknown) => {
+    w.__dflipWebgl__ = undefined
+    throw error
+  })
+
+  return w.__dflipWebgl__
 }

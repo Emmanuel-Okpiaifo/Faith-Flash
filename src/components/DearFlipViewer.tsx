@@ -1,30 +1,30 @@
 import { useEffect, useRef, useState } from 'react'
 import { appHref } from '../lib/appHref'
-import { ensureDflipLoaded } from '../lib/dflipRuntime'
-import { takeMagazineSource } from '../lib/warmMagazine'
-import { isWebkitEngine } from '../lib/webkit'
+import { ensureDflipLoaded, ensureFlipWebgl } from '../lib/dflipRuntime'
+import { takeMagazineSource, type MagazineSource } from '../lib/warmMagazine'
+import { isIosDevice, isIpad, isIphone, isWebkitEngine } from '../lib/webkit'
 
 /**
- * Embeds the DearFlip Lite (v1.7, CC BY-NC-ND 4.0) flipbook viewer around the
- * magazine PDF. The plugin's files are served from /public/dflip/ verbatim
- * (no modifications, per the Lite license). Scripts are loaded once and
- * cached on the window; subsequent opens reuse them.
+ * Embeds DearFlip Lite (v1.7, CC BY-NC-ND 4.0). Plugin files in /public/dflip
+ * stay unmodified. Scripts load once and stay on the window.
  *
- * The PDF is served same-origin through a Netlify proxy rewrite
- * (`/magazines/files/*` → ImageKit). That removes the cross-origin Range
- * request that was failing on iOS Safari with "cross origin cannot load
- * file" — ImageKit's 206 responses don't expose Content-Range via
- * Access-Control-Expose-Headers, and older Safari doesn't honour
- * Access-Control-Allow-Headers: *.
+ * iPhone and iPad do not render this magazine through pdf.js. The bundled
+ * pdf.js 4.10 turns Safari's ImageDecoder on, and that decoder drops the
+ * photographs while leaving the text, which is the blank-page report. Range
+ * requests against ImageKit also fail on iOS because Content-Range is not
+ * listed in Access-Control-Expose-Headers ("cross origin cannot load file").
+ * Those devices get the pre-rendered page JPEGs inside the same 3D book
+ * Android uses. An iPhone shows one page, and the stage is narrowed so the
+ * pages beside it stay out of view. That narrowing is iPhone-only. iPad,
+ * Android, other tablets, and computers keep DearFlip's own full-width book:
+ * one page on a phone-width screen, both pages once the screen can hold them.
+ * The photographs are WebGL textures, so pdf.js never runs on iOS.
  *
- * iOS Safari hardening: when the user agent is WebKit we also switch into a
- * mode that respects iOS per-tab memory and per-canvas pixel limits. iOS
- * caps a single canvas backing store at roughly 4096×4096 (and ~5 MP on
- * older devices); pdf.js's default `maxCanvasPixels` is 16777216 (~4096²).
- * Capping that, forcing a single-page spread, and turning off the WebGL 3D
- * flip keeps rendering inside the device budget so photos paint.
+ * Desktop Safari still reads the PDF, with the decoder and range requests
+ * turned off, and with the file URL included. Passing only the extra pdf.js
+ * flags used to replace the whole getDocument argument and drop the URL.
  *
- * Desktop and Android stay on the full 3D flipbook.
+ * Desktop Chromium and Android stay on the full 3D PDF flipbook.
  */
 
 type DflipWindow = Window & {
@@ -41,89 +41,150 @@ interface DearFlipViewerProps {
   pdfUrl: string
   title: string
   poster?: string
+  /** Absolute page-image URLs, in order. Used on iOS instead of the PDF. */
+  pages?: string[]
 }
 
-function pageModeFor(width: number, forceSingle: boolean) {
-  if (forceSingle) return 1
-  return width < 960 ? 1 : 2
+// DearFlip PAGE_MODE. Only an iPhone is forced to one page. Android, tablets,
+// and computers follow the width of the screen: a phone-width window shows
+// one page, and a window that can hold a spread shows both.
+const SINGLE_PAGE = 1
+const DOUBLE_PAGE = 2
+
+function pageModeFor(width: number) {
+  if (isIphone()) return SINGLE_PAGE
+  if (isIpad()) return width >= 700 ? DOUBLE_PAGE : SINGLE_PAGE
+  return width >= 768 ? DOUBLE_PAGE : SINGLE_PAGE
 }
 
-function viewerHeight(width: number) {
-  const single = width < 960
-  const fromWidth = width * (single ? 1.42 : 0.76)
-  const fromScreen = Math.max(480, window.innerHeight * 0.82)
-  return Math.round(Math.min(fromWidth, fromScreen))
+/** Portrait page height / width. A spread is about twice as wide, so shorter. */
+function frameFor(availableWidth: number) {
+  const single = pageModeFor(availableWidth) === SINGLE_PAGE
+  const ratio = single ? 1.42 : 0.76
+  const screenCap = Math.max(isIphone() ? 0 : 480, window.innerHeight * 0.82)
+  const height = Math.round(Math.min(availableWidth * ratio, screenCap))
+  // Landscape iPhone is short and wide. Fitting one page to that height while
+  // leaving the stage full width keeps the neighboring pages on screen.
+  // Android, tablets, and computers stay full width so DearFlip frames the
+  // book itself.
+  const width =
+    isIphone() && availableWidth * ratio > screenCap
+      ? Math.round(screenCap / ratio)
+      : availableWidth
+  return { width, height }
 }
 
-// iOS Safari silently fails to back a canvas larger than roughly 4096×4096
-// on recent iPhones, and closer to ~5 MP on older devices. Cap below that
-// so pdf.js downsamples instead of blanking photo regions.
-const IOS_MAX_CANVAS_PIXELS = 5_242_880
+function availableWidth(stage: HTMLElement) {
+  return stage.parentElement?.parentElement?.clientWidth || stage.clientWidth || window.innerWidth
+}
 
-export function DearFlipViewer({ pdfUrl, title, poster }: DearFlipViewerProps) {
+function applyFrame(stage: HTMLElement, available: number) {
+  const frame = frameFor(available)
+  const shell = stage.parentElement
+  if (shell) {
+    const nextWidth = frame.width < available - 1 ? `${frame.width}px` : ''
+    if (shell.style.width !== nextWidth) {
+      shell.style.width = nextWidth
+      shell.style.marginInline = nextWidth ? 'auto' : ''
+    }
+  }
+  return frame
+}
+
+// pdf.js 4 replaced maxCanvasPixels with canvasMaxAreaInBytes (width * height * 4).
+// 5 megapixels stays under the older iOS canvas ceiling.
+const WEBKIT_CANVAS_BYTES = 5_242_880 * 4
+
+function webkitDocParameters(pdfUrl: string, source: MagazineSource) {
+  return {
+    ...(source.kind === 'file' ? { data: source.data } : { url: pdfUrl }),
+    cMapUrl: appHref('/dflip/js/libs/cmaps/'),
+    cMapPacked: true,
+    imageResourcesPath: appHref('/dflip/images/pdfjs/'),
+    disableAutoFetch: true,
+    disableStream: true,
+    disableRange: true,
+    isImageDecoderSupported: false,
+    isOffscreenCanvasSupported: false,
+    canvasMaxAreaInBytes: WEBKIT_CANVAS_BYTES,
+    maxImageSize: 8 * 1024 * 1024,
+    useSystemFonts: true,
+  }
+}
+
+export function DearFlipViewer({ pdfUrl, title, poster, pages }: DearFlipViewerProps) {
   const stageRef = useRef<HTMLDivElement>(null)
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
   const [errorMsg, setErrorMsg] = useState<string>('')
+  const pageKey = pages?.join('\n') ?? ''
 
   useEffect(() => {
     let cancelled = false
     const stage = stageRef.current
     if (!stage) return
+
+    const pageList = pageKey ? pageKey.split('\n') : []
+    const usePageImages = isIosDevice() && pageList.length > 0
     const webkit = isWebkitEngine()
-    // Prefer any bytes the background warmup already has; otherwise hand
-    // DearFlip the (now same-origin) URL so pdf.js can Range-stream the
-    // first pages. Forcing a full 13 MB download before open on iPhone
-    // would just recreate the long spinner the owner reported.
-    const sourceTask = takeMagazineSource(pdfUrl)
+    const sourceTask = usePageImages ? null : takeMagazineSource(pdfUrl)
 
     ;(async () => {
       try {
-        const [source] = await Promise.all([sourceTask.promise, ensureDflipLoaded()])
+        const [source] = await Promise.all([
+          sourceTask ? sourceTask.promise : Promise.resolve(null),
+          usePageImages ? ensureFlipWebgl() : ensureDflipLoaded(),
+        ])
         if (cancelled || !stage) return
+        if (!usePageImages && !source) return
 
         stage.innerHTML = ''
         const book = document.createElement('div')
-        const width = stage.clientWidth || window.innerWidth
+        const available = availableWidth(stage)
+        const frame = applyFrame(stage, available)
         book.className = '_df_book'
-        book.setAttribute('source', pdfUrl)
+        book.setAttribute('df-parsed', 'true')
         book.setAttribute('id', `dflip_${Math.random().toString(36).slice(2, 10)}`)
-        // On iOS/macOS Safari, drop WebGL, drop the hard-cover 3D geometry,
-        // and force single-page so pdf.js only has one page rasterised at a
-        // time. This keeps total GPU + canvas backing-store memory inside
-        // the per-tab budget and makes photo decoding reliable.
-        book.setAttribute('webgl', webkit ? 'false' : 'true')
-        if (webkit) book.setAttribute('hard', 'none')
+        const threeD = usePageImages || !webkit
+        book.setAttribute('webgl', threeD ? 'true' : 'false')
+        if (!threeD) book.setAttribute('hard', 'none')
         book.setAttribute('backgroundcolor', '#F8F8F6')
-        book.setAttribute('autoEnableOutline', 'false')
-        book.setAttribute('autoEnableThumbnail', 'false')
+        if (!usePageImages) book.setAttribute('source', pdfUrl)
         stage.appendChild(book)
 
         const w = window as DflipWindow & {
-          jQuery?: ((el: Element) => { flipBook: (url: string, opts: unknown) => FlipBook })
+          jQuery?: ((el: Element) => { flipBook: (url: string | string[], opts: unknown) => FlipBook })
         }
         if (typeof w.jQuery !== 'function') {
           throw new Error('DearFlip runtime unavailable')
         }
-        const docExtra = webkit
-          ? {
-              cMapUrl: appHref('/dflip/js/libs/cmaps/'),
-              cMapPacked: true,
-              imageResourcesPath: appHref('/dflip/images/pdfjs/'),
-              maxImageSize: 8 * 1024 * 1024,
-              disableFontFace: false,
-              useSystemFonts: true,
-            }
-          : {}
-        const flip = w.jQuery(book).flipBook(pdfUrl, {
-          height: viewerHeight(width),
-          webgl: !webkit,
-          hard: webkit ? 'none' : 'all',
-          maxCanvasPixels: webkit ? IOS_MAX_CANVAS_PIXELS : undefined,
+
+        const docParameters = usePageImages
+          ? undefined
+          : webkit
+            ? webkitDocParameters(pdfUrl, source as MagazineSource)
+            : source?.kind === 'file'
+              ? {
+                  data: source.data,
+                  cMapUrl: appHref('/dflip/js/libs/cmaps/'),
+                  cMapPacked: true,
+                  imageResourcesPath: appHref('/dflip/images/pdfjs/'),
+                  disableAutoFetch: true,
+                  disableStream: true,
+                }
+              : undefined
+
+        const flip = w.jQuery(book).flipBook(usePageImages ? pageList : pdfUrl, {
+          height: frame.height,
+          webgl: threeD,
+          hard: threeD ? 'all' : 'none',
           backgroundColor: '#F8F8F6',
           autoEnableOutline: false,
           autoEnableThumbnail: false,
-          pageMode: pageModeFor(width, webkit),
-          singlePageMode: 1,
+          enableDownload: !usePageImages,
+          pageMode: pageModeFor(available),
+          // Zoom-to-one-page is the iPhone framing. Other devices keep
+          // DearFlip's own single-page style (booklet on a phone, zoom on a computer).
+          ...(isIphone() ? { singlePageMode: 1 } : {}),
           paddingTop: 8,
           paddingBottom: 8,
           paddingLeft: 0,
@@ -132,33 +193,21 @@ export function DearFlipViewer({ pdfUrl, title, poster }: DearFlipViewerProps) {
           onReady: () => {
             if (!cancelled) setStatus('ready')
           },
-          ...(source.kind === 'file'
-            ? {
-                docParameters: {
-                  data: source.data,
-                  cMapUrl: appHref('/dflip/js/libs/cmaps/'),
-                  cMapPacked: true,
-                  imageResourcesPath: appHref('/dflip/images/pdfjs/'),
-                  disableAutoFetch: true,
-                  disableStream: true,
-                  ...docExtra,
-                },
-              }
-            : webkit
-              ? { docParameters: { ...docExtra } }
-              : {}),
+          ...(docParameters ? { docParameters } : {}),
         })
 
-        let mode = pageModeFor(width, webkit)
+        let mode = pageModeFor(available)
         let resizeTimer = 0
         const fit = () => {
-          const nextWidth = stage.clientWidth || window.innerWidth
-          const nextMode = pageModeFor(nextWidth, webkit)
+          const available = availableWidth(stage)
+          const next = applyFrame(stage, available)
+          const nextMode = pageModeFor(available)
           if (nextMode !== mode) {
             flip.setPageMode?.(nextMode === 1)
             mode = nextMode
           }
-          flip.height?.(viewerHeight(nextWidth))
+          flip.height?.(next.height)
+          flip.resize?.()
         }
         const onResize = () => {
           window.clearTimeout(resizeTimer)
@@ -191,13 +240,13 @@ export function DearFlipViewer({ pdfUrl, title, poster }: DearFlipViewerProps) {
 
     return () => {
       cancelled = true
-      sourceTask.cancel()
+      sourceTask?.cancel()
       const node = stage as HTMLDivElement & { __dflipStop?: () => void }
       node.__dflipStop?.()
       node.__dflipStop = undefined
       if (stage) stage.innerHTML = ''
     }
-  }, [pdfUrl])
+  }, [pdfUrl, pageKey])
 
   return (
     <div className="dearflip" aria-label={`${title} flipbook`}>
