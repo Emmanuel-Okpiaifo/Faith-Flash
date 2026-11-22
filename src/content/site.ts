@@ -20,6 +20,13 @@ function expressionPhoto(file: string) {
 
 export const siteOrigin = 'https://faith-flash.netlify.app'
 
+/**
+ * Bump this when the magazine PDF behind the same ImageKit path is replaced,
+ * so browsers / DearFlip / pdf.js fetch a fresh copy instead of a year-long
+ * cached response. Appended as `?v=` on magazines[].file.
+ */
+export const MAGAZINE_PDF_VERSION = '20261122'
+
 export const site = {
   church: 'RCCG The Envoys',
   department: 'Faith Flash',
@@ -136,8 +143,10 @@ export const site = {
       // Same-origin proxy of the ImageKit CDN file (see netlify.toml /
       // public/_redirects). Serving through this site's origin lets pdf.js
       // make Range requests on iOS Safari without hitting ImageKit's CORS
-      // expose-headers gap ("cross origin cannot load file").
-      file: '/magazines/files/royal-mercy-unending-open-doors-mercy-convention-2026.pdf',
+      // expose-headers gap ("cross origin cannot load file"). The ?v= query
+      // busts long-lived browser / CDN caches when the PDF is replaced at
+      // the same ImageKit path — bump MAGAZINE_PDF_VERSION above.
+      file: `/magazines/files/royal-mercy-unending-open-doors-mercy-convention-2026.pdf?v=${MAGAZINE_PDF_VERSION}`,
       cover: '/magazines/unending-open-doors-mercy-convention-2026-cover.jpg',
       // Per-page JPEG renders (portrait, 1400px long side) hosted on ImageKit.
       // Kept in content for a future image-based fallback; the live viewer
