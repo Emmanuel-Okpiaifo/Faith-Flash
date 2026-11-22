@@ -15,6 +15,8 @@
   to = "https://ik.imagekit.io/emmzy26/faithflash/magazines/:splat"
   status = 200
   force = true
+  # Query strings (e.g. ?v=20261122 cache-bust) are forwarded to ImageKit by
+  # default; ImageKit ignores unknown params on non-image files.
 
 [[redirects]]
   from = "/podcasts"
@@ -25,6 +27,13 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+# Override ImageKit's year-long Cache-Control on the proxied PDF so a replaced
+# file at the same path is picked up within an hour even without a ?v= bump.
+[[headers]]
+  for = "/magazines/files/*"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, must-revalidate"
 
 [build]
   command = "npm run build"
